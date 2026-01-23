@@ -1,0 +1,42 @@
+body {
+    background-color: #f7f7f9;
+}
+
+.section-card {
+    border: 1px solid #e2e6ea;
+    border-radius: 0.75rem;
+    background-color: #fff;
+    margin-bottom: 1.25rem;
+}
+
+.section-card summary {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 1rem 1.25rem;
+    list-style: none;
+}
+
+.section-card summary::marker {
+    display: none;
+}
+
+.section-card .section-body {
+    padding: 0 1.25rem 1.25rem;
+}
+
+.required::after {
+    content: " *";
+    color: #c1121f;
+    font-weight: 600;
+}
+
+.form-hint {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.request-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+}
