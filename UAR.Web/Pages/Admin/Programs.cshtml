@@ -1,0 +1,66 @@
+@page
+@model UAR.Web.Pages.Admin.ProgramsModel
+
+<h2 class="mb-3">Admin: Programs</h2>
+<p class="text-muted">Maintain the program lookup table used on the access request form.</p>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="bg-white rounded-4 shadow-sm p-3">
+            <h5>Add / update program</h5>
+            <form method="post" asp-page-handler="Add">
+                <div class="mb-2">
+                    <label class="form-label" asp-for="NewProgram.ProgramCode">Program code</label>
+                    <input class="form-control" asp-for="NewProgram.ProgramCode" />
+                </div>
+                <div class="mb-2">
+                    <label class="form-label" asp-for="NewProgram.ProgramName">Program name</label>
+                    <input class="form-control" asp-for="NewProgram.ProgramName" />
+                </div>
+                <div class="mb-2">
+                    <label class="form-label" asp-for="NewProgram.Description">Description</label>
+                    <textarea class="form-control" asp-for="NewProgram.Description" rows="2"></textarea>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" asp-for="NewProgram.IsActive" />
+                    <label class="form-check-label" asp-for="NewProgram.IsActive">Active</label>
+                </div>
+                <button class="btn btn-primary" type="submit">Save program</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="bg-white rounded-4 shadow-sm p-3">
+            <h5>Existing programs</h5>
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Active</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var program in Model.Programs)
+                        {
+                            <tr>
+                                <td>@program.ProgramCode</td>
+                                <td>@program.ProgramName</td>
+                                <td>@program.Description</td>
+                                <td>@program.IsActive</td>
+                                <td>
+                                    <form method="post" asp-page-handler="Delete" asp-route-id="@program.Id">
+                                        <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
