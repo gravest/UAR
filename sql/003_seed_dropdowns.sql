@@ -38,13 +38,12 @@ VALUES
     (N'DeviceType', N'Phone', 20),
     (N'DeviceType', N'Mifi', 30),
 
-    (N'Status', N'Saved As Draft', 10),
-    (N'Status', N'Submit for Approval', 20),
-    (N'Status', N'Pending Manager Approval', 30),
+    (N'Status', N'Draft', 10),
+    (N'Status', N'Pending Approval', 20),
+    (N'Status', N'Pending RDO Approval', 30),
     (N'Status', N'Approved', 40),
-    (N'Status', N'Pending RDO Approval', 50),
-    (N'Status', N'Rejected', 60),
-    (N'Status', N'Completed', 70),
+    (N'Status', N'Rejected', 50),
+    (N'Status', N'Sent for Fulfillment', 60),
 
     (N'SubmitForApproval', N'Yes', 10),
     (N'SubmitForApproval', N'No', 20),

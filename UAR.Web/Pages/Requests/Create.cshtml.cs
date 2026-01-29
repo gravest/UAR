@@ -50,7 +50,7 @@ public class CreateModel : PageModel
         SetDefaultDesiredEffectiveDate();
         if (string.IsNullOrWhiteSpace(RequestForm.Status))
         {
-            RequestForm.Status = "Saved As Draft";
+            RequestForm.Status = "Draft";
         }
     }
 
@@ -65,7 +65,7 @@ public class CreateModel : PageModel
 
         if (string.IsNullOrWhiteSpace(RequestForm.Status))
         {
-            RequestForm.Status = "Saved As Draft";
+            RequestForm.Status = "Draft";
         }
         SetDefaultDesiredEffectiveDate();
 
