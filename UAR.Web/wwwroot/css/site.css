@@ -14,14 +14,14 @@ body {
 }
 
 .accordion .accordion-button {
-    background-color: #fff;
-    color: #212529;
+    background-color: #325d88;
+    color: #fff;
     font-weight: 600;
 }
 
 .accordion .accordion-button:not(.collapsed) {
-    background-color: #eef2f6;
-    color: #212529;
+    background-color: #325d88;
+    color: #fff;
 }
 
 .required::after {
