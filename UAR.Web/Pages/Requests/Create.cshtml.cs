@@ -10,12 +10,18 @@ public class CreateModel : PageModel
     private readonly DropdownService _dropdownService;
     private readonly ProgramLookupService _programService;
     private readonly RequestService _requestService;
+    private readonly EmailService _emailService;
 
-    public CreateModel(DropdownService dropdownService, ProgramLookupService programService, RequestService requestService)
+    public CreateModel(
+        DropdownService dropdownService,
+        ProgramLookupService programService,
+        RequestService requestService,
+        EmailService emailService)
     {
         _dropdownService = dropdownService;
         _programService = programService;
         _requestService = requestService;
+        _emailService = emailService;
     }
 
     [BindProperty]
@@ -77,6 +83,13 @@ public class CreateModel : PageModel
         RequestForm.AdditionalLawsonAccess = string.Join(", ", SelectedAdditionalLawsonAccess);
 
         var id = await _requestService.CreateAsync(RequestForm);
+        RequestForm.Id = id;
+
+        if (IsSubmittedForApproval(RequestForm))
+        {
+            await _emailService.SendApproverEmailAsync(RequestForm);
+        }
+
         return RedirectToPage("/Requests/Details", new { id });
     }
 
@@ -100,5 +113,11 @@ public class CreateModel : PageModel
         BusinessIntelligenceRoles = await _dropdownService.GetOptionsAsync("BusinessIntelligenceRole");
         PharmericaUserRoles = await _dropdownService.GetOptionsAsync("PharmericaUserRole");
         Programs = await _programService.GetAllAsync();
+    }
+
+    private static bool IsSubmittedForApproval(UarRequest request)
+    {
+        return string.Equals(request.SubmitForApproval, "Yes", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(request.Status, "Submitted for Approval", StringComparison.OrdinalIgnoreCase);
     }
 }
