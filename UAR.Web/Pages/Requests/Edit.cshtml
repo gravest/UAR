@@ -1,0 +1,22 @@
+@page "{id:int}"
+@model UAR.Web.Pages.Requests.EditModel
+
+<h2 class="mb-3">Edit User Access Request</h2>
+<p class="text-muted">Update fields below and save changes. Required fields are marked with an asterisk (*).</p>
+
+<form method="post" class="mb-5">
+    <input type="hidden" asp-for="RequestForm.Id" />
+    <input type="hidden" asp-for="RequestForm.RequestNumber" />
+    <input type="hidden" asp-for="RequestForm.SubmittedOn" />
+    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+    @{
+        ViewData["UarNumberValue"] = Model.RequestForm.RequestNumber;
+        ViewData["UarNumberHint"] = "UAR number is read-only once created.";
+    }
+
+    @await Html.PartialAsync("_RequestFormFields", Model)
+
+    <button type="submit" class="btn btn-primary">Save changes</button>
+    <a class="btn btn-outline-secondary ms-2" asp-page="/Requests/Details" asp-route-id="@Model.RequestForm.Id">Cancel</a>
+</form>
