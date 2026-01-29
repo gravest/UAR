@@ -1,0 +1,36 @@
+@page
+@model UAR.Web.Pages.Requests.IndexModel
+
+<h2 class="mb-3">User Access Request Log</h2>
+<div class="table-responsive bg-white rounded-4 shadow-sm p-3">
+    <table class="table table-sm align-middle">
+        <thead>
+            <tr>
+                <th>Request #</th>
+                <th>Submitted</th>
+                <th>Employee</th>
+                <th>Program</th>
+                <th>Status</th>
+                <th>Authorized Approver</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var request in Model.Requests)
+            {
+                <tr>
+                    <td>@request.RequestNumber</td>
+                    <td>@request.SubmittedOn.ToLocalTime().ToString("g")</td>
+                    <td>@request.EmployeeFirstName @request.EmployeeLastName</td>
+                    <td>@request.Program1</td>
+                    <td>@request.Status</td>
+                    <td>@request.AuthorizedApprover</td>
+                    <td class="d-flex gap-2">
+                        <a class="btn btn-sm btn-outline-primary" asp-page="/Requests/Details" asp-route-id="@request.Id">View</a>
+                        <a class="btn btn-sm btn-outline-secondary" asp-page="/Requests/Edit" asp-route-id="@request.Id">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

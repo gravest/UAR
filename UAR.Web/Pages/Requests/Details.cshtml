@@ -1,0 +1,35 @@
+@page "{id:int}"
+@model UAR.Web.Pages.Requests.DetailsModel
+
+@if (Model.RequestDetails is null)
+{
+    <div class="alert alert-warning">Request not found.</div>
+}
+else
+{
+    <h2 class="mb-3">Request @Model.RequestDetails.RequestNumber</h2>
+    <p class="text-muted">Submitted @Model.RequestDetails.SubmittedOn.ToLocalTime().ToString("g").</p>
+
+    <div class="section-card p-3">
+        <h5>Request Summary</h5>
+        <dl class="row mb-0">
+            <dt class="col-sm-4">Employee</dt>
+            <dd class="col-sm-8">@Model.RequestDetails.EmployeeFirstName @Model.RequestDetails.EmployeeLastName</dd>
+            <dt class="col-sm-4">Company</dt>
+            <dd class="col-sm-8">@Model.RequestDetails.Company</dd>
+            <dt class="col-sm-4">Program 1</dt>
+            <dd class="col-sm-8">@Model.RequestDetails.Program1</dd>
+            <dt class="col-sm-4">Status</dt>
+            <dd class="col-sm-8">@Model.RequestDetails.Status</dd>
+            <dt class="col-sm-4">Authorized Approver</dt>
+            <dd class="col-sm-8">@Model.RequestDetails.AuthorizedApprover</dd>
+            <dt class="col-sm-4">RDO Approver</dt>
+            <dd class="col-sm-8">@Model.RequestDetails.RdoApprover</dd>
+        </dl>
+    </div>
+
+    <div class="mt-3 d-flex gap-2">
+        <a class="btn btn-outline-secondary" asp-page="/Requests/Index">Back to log</a>
+        <a class="btn btn-primary" asp-page="/Requests/Edit" asp-route-id="@Model.RequestDetails.Id">Edit request</a>
+    </div>
+}

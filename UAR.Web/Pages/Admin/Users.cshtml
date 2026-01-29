@@ -1,0 +1,80 @@
+@page
+@model UAR.Web.Pages.Admin.UsersModel
+
+<h2 class="mb-3">Admin: Users</h2>
+<p class="text-muted">Maintain the user lookup table used to pre-fill employee details.</p>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="bg-white rounded-4 shadow-sm p-3">
+            <h5>Add / update user</h5>
+            <form method="post" asp-page-handler="Add">
+                <div class="mb-2">
+                    <label class="form-label" asp-for="NewUser.EmployeeId">Employee ID</label>
+                    <input class="form-control" asp-for="NewUser.EmployeeId" />
+                </div>
+                <div class="mb-2">
+                    <label class="form-label" asp-for="NewUser.FullName">Full name</label>
+                    <input class="form-control" asp-for="NewUser.FullName" />
+                </div>
+                <div class="mb-2">
+                    <label class="form-label" asp-for="NewUser.Email">Email</label>
+                    <input class="form-control" asp-for="NewUser.Email" />
+                </div>
+                <div class="mb-2">
+                    <label class="form-label" asp-for="NewUser.Department">Department</label>
+                    <input class="form-control" asp-for="NewUser.Department" />
+                </div>
+                <div class="mb-2">
+                    <label class="form-label" asp-for="NewUser.Title">Title</label>
+                    <input class="form-control" asp-for="NewUser.Title" />
+                </div>
+                <div class="mb-2">
+                    <label class="form-label" asp-for="NewUser.Location">Location</label>
+                    <input class="form-control" asp-for="NewUser.Location" />
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" asp-for="NewUser.IsActive" />
+                    <label class="form-check-label" asp-for="NewUser.IsActive">Active</label>
+                </div>
+                <button class="btn btn-primary" type="submit">Save user</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="bg-white rounded-4 shadow-sm p-3">
+            <h5>Existing users</h5>
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Department</th>
+                            <th>Active</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Users)
+                        {
+                            <tr>
+                                <td>@user.EmployeeId</td>
+                                <td>@user.FullName</td>
+                                <td>@user.Email</td>
+                                <td>@user.Department</td>
+                                <td>@user.IsActive</td>
+                                <td>
+                                    <form method="post" asp-page-handler="Delete" asp-route-id="@user.Id">
+                                        <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
