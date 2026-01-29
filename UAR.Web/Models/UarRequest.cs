@@ -154,4 +154,18 @@ public class UarRequest
     public string? SmartsheetLicense { get; set; }
 
     public string? EFax { get; set; }
+
+    public Guid? ApprovalToken { get; set; }
+
+    public Guid? RejectionToken { get; set; }
+
+    public string? ApprovalDecision { get; set; }
+
+    public DateTime? ApprovedOn { get; set; }
+
+    public string? ApprovedBy { get; set; }
+
+    public DateTime? RejectedOn { get; set; }
+
+    public string? RejectedBy { get; set; }
 }

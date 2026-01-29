@@ -64,6 +64,63 @@ public class RequestService
         return await reader.ReadAsync() ? MapRequest(reader) : null;
     }
 
+    public async Task<UarRequest?> GetByApprovalTokenAsync(Guid token)
+    {
+        await using var connection = _connectionFactory.CreateConnection();
+        await connection.OpenAsync();
+        await using var command = new SqlCommand("dbo.UarRequest_GetByApprovalToken", connection)
+        {
+            CommandType = System.Data.CommandType.StoredProcedure
+        };
+        command.Parameters.AddWithValue("@ApprovalToken", token);
+
+        await using var reader = await command.ExecuteReaderAsync();
+        return await reader.ReadAsync() ? MapRequest(reader) : null;
+    }
+
+    public async Task<UarRequest?> GetByRejectionTokenAsync(Guid token)
+    {
+        await using var connection = _connectionFactory.CreateConnection();
+        await connection.OpenAsync();
+        await using var command = new SqlCommand("dbo.UarRequest_GetByRejectionToken", connection)
+        {
+            CommandType = System.Data.CommandType.StoredProcedure
+        };
+        command.Parameters.AddWithValue("@RejectionToken", token);
+
+        await using var reader = await command.ExecuteReaderAsync();
+        return await reader.ReadAsync() ? MapRequest(reader) : null;
+    }
+
+    public async Task<bool> ApproveByTokenAsync(Guid token, string approvedBy)
+    {
+        await using var connection = _connectionFactory.CreateConnection();
+        await connection.OpenAsync();
+        await using var command = new SqlCommand("dbo.UarRequest_ApproveByToken", connection)
+        {
+            CommandType = System.Data.CommandType.StoredProcedure
+        };
+        command.Parameters.AddWithValue("@ApprovalToken", token);
+        command.Parameters.AddWithValue("@ApprovedBy", approvedBy);
+        command.Parameters.AddWithValue("@ApprovedOn", DateTime.UtcNow);
+        return await command.ExecuteNonQueryAsync() > 0;
+    }
+
+    public async Task<bool> RejectByTokenAsync(Guid token, string rejectedBy, string? rejectionReason)
+    {
+        await using var connection = _connectionFactory.CreateConnection();
+        await connection.OpenAsync();
+        await using var command = new SqlCommand("dbo.UarRequest_RejectByToken", connection)
+        {
+            CommandType = System.Data.CommandType.StoredProcedure
+        };
+        command.Parameters.AddWithValue("@RejectionToken", token);
+        command.Parameters.AddWithValue("@RejectedBy", rejectedBy);
+        command.Parameters.AddWithValue("@RejectedOn", DateTime.UtcNow);
+        command.Parameters.AddWithValue("@RejectionReason", ToDbValue(rejectionReason));
+        return await command.ExecuteNonQueryAsync() > 0;
+    }
+
     public async Task UpdateAsync(UarRequest request)
     {
         await using var connection = _connectionFactory.CreateConnection();
@@ -160,11 +217,28 @@ public class RequestService
         command.Parameters.AddWithValue("@CopilotLicense", ToDbValue(request.CopilotLicense));
         command.Parameters.AddWithValue("@SmartsheetLicense", ToDbValue(request.SmartsheetLicense));
         command.Parameters.AddWithValue("@EFax", ToDbValue(request.EFax));
+        command.Parameters.AddWithValue("@ApprovalToken", ToDbValue(request.ApprovalToken));
+        command.Parameters.AddWithValue("@RejectionToken", ToDbValue(request.RejectionToken));
+        command.Parameters.AddWithValue("@ApprovalDecision", ToDbValue(request.ApprovalDecision));
+        command.Parameters.AddWithValue("@ApprovedOn", ToDbValue(request.ApprovedOn));
+        command.Parameters.AddWithValue("@ApprovedBy", ToDbValue(request.ApprovedBy));
+        command.Parameters.AddWithValue("@RejectedOn", ToDbValue(request.RejectedOn));
+        command.Parameters.AddWithValue("@RejectedBy", ToDbValue(request.RejectedBy));
     }
 
     private static object ToDbValue(string? value)
     {
         return string.IsNullOrWhiteSpace(value) ? DBNull.Value : value;
+    }
+
+    private static object ToDbValue(Guid? value)
+    {
+        return value.HasValue && value.Value != Guid.Empty ? value.Value : DBNull.Value;
+    }
+
+    private static object ToDbValue(DateTime? value)
+    {
+        return value.HasValue ? value.Value : DBNull.Value;
     }
 
     private static UarRequest MapRequest(SqlDataReader reader)
@@ -240,12 +314,29 @@ public class RequestService
             AdobeSignAccount = GetStringSafe(reader, 66),
             CopilotLicense = GetStringSafe(reader, 67),
             SmartsheetLicense = GetStringSafe(reader, 68),
-            EFax = GetStringSafe(reader, 69)
+            EFax = GetStringSafe(reader, 69),
+            ApprovalToken = GetGuidSafe(reader, 70),
+            RejectionToken = GetGuidSafe(reader, 71),
+            ApprovalDecision = GetStringSafe(reader, 72),
+            ApprovedOn = GetDateTimeSafe(reader, 73),
+            ApprovedBy = GetStringSafe(reader, 74),
+            RejectedOn = GetDateTimeSafe(reader, 75),
+            RejectedBy = GetStringSafe(reader, 76)
         };
     }
 
     private static string GetStringSafe(SqlDataReader reader, int ordinal)
     {
         return reader.IsDBNull(ordinal) ? string.Empty : reader.GetString(ordinal);
+    }
+
+    private static Guid? GetGuidSafe(SqlDataReader reader, int ordinal)
+    {
+        return reader.IsDBNull(ordinal) ? null : reader.GetGuid(ordinal);
+    }
+
+    private static DateTime? GetDateTimeSafe(SqlDataReader reader, int ordinal)
+    {
+        return reader.IsDBNull(ordinal) ? null : reader.GetDateTime(ordinal);
     }
 }

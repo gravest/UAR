@@ -1,0 +1,33 @@
+@page
+@model UAR.Web.Pages.Requests.RejectModel
+@{
+    ViewData["Title"] = "Reject Request";
+}
+
+<h1>Reject Request</h1>
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+else if (Model.RequestDetails == null)
+{
+    <div class="alert alert-warning">Unable to locate the request.</div>
+}
+else
+{
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">@Model.RequestDetails.RequestNumber</h5>
+            <p class="card-text">Status: @Model.RequestDetails.Status</p>
+            @if (Model.Updated)
+            {
+                <div class="alert alert-warning">The request has been rejected.</div>
+            }
+            else
+            {
+                <div class="alert alert-info">This request was already processed.</div>
+            }
+        </div>
+    </div>
+}
