@@ -1,5 +1,7 @@
 -- Seed dropdown options used by the request form.
--- Safe to re-run: skips values that already exist.
+-- Safe to re-run: resets existing dropdowns and inserts current values.
+
+TRUNCATE TABLE dbo.DropdownOptions;
 
 DECLARE @Options TABLE (
     Category NVARCHAR(100),
@@ -136,13 +138,7 @@ SELECT o.Category,
        o.Value,
        o.SortOrder,
        1
-FROM @Options o
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM dbo.DropdownOptions existing
-    WHERE existing.Category = o.Category
-      AND existing.Value = o.Value
-);
+FROM @Options o;
 
 DECLARE @Programs TABLE (
     ProgramCode NVARCHAR(50),
