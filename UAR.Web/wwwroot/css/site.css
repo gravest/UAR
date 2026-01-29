@@ -9,19 +9,19 @@ body {
     margin-bottom: 1.25rem;
 }
 
-.section-card summary {
-    cursor: pointer;
-    font-weight: 600;
-    padding: 1rem 1.25rem;
-    list-style: none;
-}
-
-.section-card summary::marker {
-    display: none;
-}
-
 .section-card .section-body {
     padding: 0 1.25rem 1.25rem;
+}
+
+.accordion .accordion-button {
+    background-color: #fff;
+    color: #212529;
+    font-weight: 600;
+}
+
+.accordion .accordion-button:not(.collapsed) {
+    background-color: #eef2f6;
+    color: #212529;
 }
 
 .required::after {
