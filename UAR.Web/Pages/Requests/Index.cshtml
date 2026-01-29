@@ -25,7 +25,10 @@
                     <td>@request.Program1</td>
                     <td>@request.Status</td>
                     <td>@request.AuthorizedApprover</td>
-                    <td><a class="btn btn-sm btn-outline-primary" asp-page="/Requests/Details" asp-route-id="@request.Id">View</a></td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-primary" asp-page="/Requests/Details" asp-route-id="@request.Id">View</a>
+                        <a class="btn btn-sm btn-outline-secondary ms-2" asp-page="/Requests/Edit" asp-route-id="@request.Id">Edit</a>
+                    </td>
                 </tr>
             }
         </tbody>

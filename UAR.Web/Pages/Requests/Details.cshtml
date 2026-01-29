@@ -28,5 +28,8 @@ else
         </dl>
     </div>
 
-    <a class="btn btn-outline-secondary mt-3" asp-page="/Requests/Index">Back to log</a>
+    <div class="mt-3">
+        <a class="btn btn-primary" asp-page="/Requests/Edit" asp-route-id="@Model.RequestDetails.Id">Edit request</a>
+        <a class="btn btn-outline-secondary ms-2" asp-page="/Requests/Index">Back to log</a>
+    </div>
 }

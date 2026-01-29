@@ -3,7 +3,9 @@ using UAR.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages()
+    .AddMvcOptions(options =>
+        options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
 builder.Services.AddScoped<DbConnectionFactory>();
 builder.Services.AddScoped<DropdownService>();
 builder.Services.AddScoped<RequestService>();

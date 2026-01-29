@@ -47,6 +47,7 @@ public class CreateModel : PageModel
     public async Task OnGetAsync()
     {
         await LoadOptionsAsync();
+        SetDefaultDesiredEffectiveDate();
         if (string.IsNullOrWhiteSpace(RequestForm.Status))
         {
             RequestForm.Status = "Saved As Draft";
@@ -66,6 +67,7 @@ public class CreateModel : PageModel
         {
             RequestForm.Status = "Saved As Draft";
         }
+        SetDefaultDesiredEffectiveDate();
 
         RequestForm.RequestNumber = $"UAR-{DateTime.UtcNow:yyyyMMddHHmmss}";
         RequestForm.SubmittedOn = DateTime.UtcNow;
@@ -76,6 +78,14 @@ public class CreateModel : PageModel
 
         var id = await _requestService.CreateAsync(RequestForm);
         return RedirectToPage("/Requests/Details", new { id });
+    }
+
+    private void SetDefaultDesiredEffectiveDate()
+    {
+        if (string.IsNullOrWhiteSpace(RequestForm.DesiredEffectiveDate))
+        {
+            RequestForm.DesiredEffectiveDate = DateTime.Today.AddDays(5).ToString("yyyy-MM-dd");
+        }
     }
 
     private async Task LoadOptionsAsync()
