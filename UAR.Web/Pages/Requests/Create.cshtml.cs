@@ -10,12 +10,18 @@ public class CreateModel : PageModel
     private readonly DropdownService _dropdownService;
     private readonly ProgramLookupService _programService;
     private readonly RequestService _requestService;
+    private readonly ApprovalEmailService _approvalEmailService;
 
-    public CreateModel(DropdownService dropdownService, ProgramLookupService programService, RequestService requestService)
+    public CreateModel(
+        DropdownService dropdownService,
+        ProgramLookupService programService,
+        RequestService requestService,
+        ApprovalEmailService approvalEmailService)
     {
         _dropdownService = dropdownService;
         _programService = programService;
         _requestService = requestService;
+        _approvalEmailService = approvalEmailService;
     }
 
     [BindProperty]
@@ -58,6 +64,18 @@ public class CreateModel : PageModel
     {
         await LoadOptionsAsync();
 
+        RequestForm.EmployeeDeviceTypes = string.Join(", ", SelectedEmployeeDeviceTypes);
+        RequestForm.AdditionalMicrosoftProducts = string.Join(", ", SelectedAdditionalMicrosoftProducts);
+        RequestForm.KronosAccessTypes = string.Join(", ", SelectedKronosAccessTypes);
+        RequestForm.AdditionalLawsonAccess = string.Join(", ", SelectedAdditionalLawsonAccess);
+
+        if (ApprovalWorkflow.IsSubmittingForApproval(RequestForm)
+            && RdoApprovalEvaluator.RequiresRdoApproval(RequestForm)
+            && string.IsNullOrWhiteSpace(RequestForm.RdoApprover))
+        {
+            ModelState.AddModelError("RequestForm.RdoApprover", "RDO Approver is required when RDO approval is needed.");
+        }
+
         if (!ModelState.IsValid)
         {
             return Page();
@@ -71,12 +89,16 @@ public class CreateModel : PageModel
 
         RequestForm.RequestNumber = $"UAR-{DateTime.UtcNow:yyyyMMddHHmmss}";
         RequestForm.SubmittedOn = DateTime.UtcNow;
-        RequestForm.EmployeeDeviceTypes = string.Join(", ", SelectedEmployeeDeviceTypes);
-        RequestForm.AdditionalMicrosoftProducts = string.Join(", ", SelectedAdditionalMicrosoftProducts);
-        RequestForm.KronosAccessTypes = string.Join(", ", SelectedKronosAccessTypes);
-        RequestForm.AdditionalLawsonAccess = string.Join(", ", SelectedAdditionalLawsonAccess);
 
         var id = await _requestService.CreateAsync(RequestForm);
+        RequestForm.Id = id;
+
+        if (ApprovalWorkflow.IsSubmittingForApproval(RequestForm))
+        {
+            var baseUrl = $"{Request.Scheme}://{Request.Host}";
+            await _approvalEmailService.SendManagerApprovalRequestAsync(RequestForm, baseUrl);
+        }
+
         return RedirectToPage("/Requests/Details", new { id });
     }
 
