@@ -25,10 +25,7 @@
                     <td>@request.Program1</td>
                     <td>@request.Status</td>
                     <td>@request.AuthorizedApprover</td>
-                    <td class="d-flex gap-2">
-                        <a class="btn btn-sm btn-outline-primary" asp-page="/Requests/Details" asp-route-id="@request.Id">View</a>
-                        <a class="btn btn-sm btn-outline-secondary" asp-page="/Requests/Edit" asp-route-id="@request.Id">Edit</a>
-                    </td>
+                    <td><a class="btn btn-sm btn-outline-primary" asp-page="/Requests/Details" asp-route-id="@request.Id">View</a></td>
                 </tr>
             }
         </tbody>

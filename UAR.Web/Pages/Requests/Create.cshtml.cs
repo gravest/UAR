@@ -5,7 +5,7 @@ using UAR.Web.Services;
 
 namespace UAR.Web.Pages.Requests;
 
-public class CreateModel : RequestFormPageModel
+public class CreateModel : PageModel
 {
     private readonly DropdownService _dropdownService;
     private readonly ProgramLookupService _programService;
@@ -17,6 +17,32 @@ public class CreateModel : RequestFormPageModel
         _programService = programService;
         _requestService = requestService;
     }
+
+    [BindProperty]
+    public UarRequest RequestForm { get; set; } = new();
+
+    [BindProperty]
+    public string[] SelectedEmployeeDeviceTypes { get; set; } = Array.Empty<string>();
+
+    [BindProperty]
+    public string[] SelectedAdditionalMicrosoftProducts { get; set; } = Array.Empty<string>();
+
+    [BindProperty]
+    public string[] SelectedKronosAccessTypes { get; set; } = Array.Empty<string>();
+
+    [BindProperty]
+    public string[] SelectedAdditionalLawsonAccess { get; set; } = Array.Empty<string>();
+
+    public IReadOnlyList<DropdownOption> Companies { get; private set; } = Array.Empty<DropdownOption>();
+    public IReadOnlyList<DropdownOption> EmployeeStatuses { get; private set; } = Array.Empty<DropdownOption>();
+    public IReadOnlyList<DropdownOption> EmployeeTypes { get; private set; } = Array.Empty<DropdownOption>();
+    public IReadOnlyList<DropdownOption> DeviceTypes { get; private set; } = Array.Empty<DropdownOption>();
+    public IReadOnlyList<DropdownOption> Statuses { get; private set; } = Array.Empty<DropdownOption>();
+    public IReadOnlyList<DropdownOption> Office365Licenses { get; private set; } = Array.Empty<DropdownOption>();
+    public IReadOnlyList<DropdownOption> AdditionalMicrosoftProductOptions { get; private set; } = Array.Empty<DropdownOption>();
+    public IReadOnlyList<DropdownOption> BusinessIntelligenceRoles { get; private set; } = Array.Empty<DropdownOption>();
+    public IReadOnlyList<DropdownOption> PharmericaUserRoles { get; private set; } = Array.Empty<DropdownOption>();
+    public IReadOnlyList<ProgramLookup> Programs { get; private set; } = Array.Empty<ProgramLookup>();
 
     public async Task OnGetAsync()
     {

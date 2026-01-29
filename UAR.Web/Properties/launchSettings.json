@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "UAR.Web": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:39401;http://localhost:39402"
+    }
+  }
+}

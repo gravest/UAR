@@ -3,7 +3,7 @@
 This repository contains a sample ASP.NET Core Razor Pages application that replaces a SharePoint-based User Access Request form. It captures request details, approvals, and logs requests in a SQL database.
 
 ## Features
-- Long-form layout with collapsible sections for general request info, approvals, and access areas based on the provided field list, including editing existing requests.
+- Long-form layout with collapsible sections for general request info, approvals, and access areas based on the provided field list.
 - Required fields are marked with an asterisk.
 - Automatic tracking of systems that require second-level RDO approval (systems labeled with `RDO`).
 - Admin pages to manage static dropdown values (companies, employee status/type, device type, status values, Office365 licenses, BI roles, Pharmerica roles), programs, and users.

@@ -7,12 +7,573 @@
 <form method="post" class="mb-5">
     <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-    @{
-        ViewData["UarNumberValue"] = "Auto-generated on submit";
-        ViewData["UarNumberHint"] = "System-generated request identifier with prefix UAR-.";
-    }
+    <details class="section-card" open>
+        <summary>General Request Info</summary>
+        <div class="section-body request-grid">
+            <div>
+                <label class="form-label" asp-for="RequestForm.EmployeeNameChange">Employee Name Change</label>
+                <select class="form-select" asp-for="RequestForm.EmployeeNameChange">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label required">UAR Number</label>
+                <input class="form-control" value="Auto-generated on submit" readonly />
+                <div class="form-hint">System-generated request identifier with prefix UAR-.</div>
+            </div>
+            <div>
+                <label class="form-label required" asp-for="RequestForm.Company">Company</label>
+                <select class="form-select" asp-for="RequestForm.Company">
+                    <option value="">Select company</option>
+                    @foreach (var option in Model.Companies)
+                    {
+                        <option value="@option.Value">@option.Value</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <label class="form-label required" asp-for="RequestForm.EmployeeFirstName">Employee First Name</label>
+                <input class="form-control" asp-for="RequestForm.EmployeeFirstName" />
+            </div>
+            <div>
+                <label class="form-label required" asp-for="RequestForm.EmployeeMiddleName">Employee Middle Name</label>
+                <input class="form-control" asp-for="RequestForm.EmployeeMiddleName" />
+                <div class="form-hint">If the employee does not have a middle name, type "X".</div>
+            </div>
+            <div>
+                <label class="form-label required" asp-for="RequestForm.EmployeeLastName">Employee Last Name</label>
+                <input class="form-control" asp-for="RequestForm.EmployeeLastName" />
+            </div>
+            <div>
+                <label class="form-label required" asp-for="RequestForm.JobTitle">Job Title</label>
+                <input class="form-control" asp-for="RequestForm.JobTitle" />
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.DesiredEffectiveDate">Desired Effective Date</label>
+                <input class="form-control" asp-for="RequestForm.DesiredEffectiveDate" type="date" />
+                <div class="form-hint">Standard turnaround for end-to-end completion is 3-5 business days from manager approval.</div>
+            </div>
+            <div>
+                <label class="form-label required" asp-for="RequestForm.RequestorPhoneNumber">Requestor Phone Number</label>
+                <input class="form-control" asp-for="RequestForm.RequestorPhoneNumber" />
+            </div>
+            <div>
+                <label class="form-label required" asp-for="RequestForm.EmployeeStatus">Employee Status</label>
+                <select class="form-select" asp-for="RequestForm.EmployeeStatus">
+                    <option value="">Select status</option>
+                    @foreach (var option in Model.EmployeeStatuses)
+                    {
+                        <option value="@option.Value">@option.Value</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.EmployeeType">Employee Type</label>
+                <select class="form-select" asp-for="RequestForm.EmployeeType">
+                    <option value="">Select type</option>
+                    @foreach (var option in Model.EmployeeTypes)
+                    {
+                        <option value="@option.Value">@option.Value</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.TransferFromProgram">Transfer from Program</label>
+                <select class="form-select" asp-for="RequestForm.TransferFromProgram">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+                <div class="form-hint">If Yes, consider capturing the From Program in your workflow.</div>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.LeaveOfAbsence">Leave of Absence</label>
+                <select class="form-select" asp-for="RequestForm.LeaveOfAbsence">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.RegionName">Region Name</label>
+                <input class="form-control" asp-for="RequestForm.RegionName" />
+                <div class="form-hint">Can be derived from Program selection; keep read-only if derived.</div>
+            </div>
+            <div>
+                <label class="form-label required" asp-for="RequestForm.Program1">Program 1</label>
+                <select class="form-select" asp-for="RequestForm.Program1">
+                    <option value="">Select program</option>
+                    @foreach (var program in Model.Programs)
+                    {
+                        <option value="@program.ProgramName">@program.ProgramName (@program.ProgramCode)</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.Program2">Program 2</label>
+                <select class="form-select" asp-for="RequestForm.Program2">
+                    <option value="">Select program</option>
+                    @foreach (var program in Model.Programs)
+                    {
+                        <option value="@program.ProgramName">@program.ProgramName (@program.ProgramCode)</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.Program3">Program 3</label>
+                <select class="form-select" asp-for="RequestForm.Program3">
+                    <option value="">Select program</option>
+                    @foreach (var program in Model.Programs)
+                    {
+                        <option value="@program.ProgramName">@program.ProgramName (@program.ProgramCode)</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="section-body">
+            <label class="form-label" asp-for="RequestForm.OtherPrograms">Other Programs (If more than 3 Programs)</label>
+            <textarea class="form-control" asp-for="RequestForm.OtherPrograms" rows="2"></textarea>
+            <div class="form-hint">Include the 3 digit allocation code when listing additional programs.</div>
+        </div>
+        <div class="section-body">
+            <label class="form-label" asp-for="RequestForm.EmployeeDeviceTypes">Employee Device Type(s)</label>
+            <div class="row row-cols-1 row-cols-md-2 g-2">
+                @foreach (var option in Model.DeviceTypes)
+                {
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="SelectedEmployeeDeviceTypes" value="@option.Value" id="device-@option.Id" />
+                            <label class="form-check-label" for="device-@option.Id">@option.Value</label>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="form-hint">If Other is selected, include the device type below.</div>
+            <input class="form-control mt-2" asp-for="RequestForm.OtherDeviceType" placeholder="Other device type" />
+        </div>
+        <div class="section-body">
+            <label class="form-label" asp-for="RequestForm.HrRepresentativeName">HR Representative/Liaison Name</label>
+            <input class="form-control" asp-for="RequestForm.HrRepresentativeName" />
+            <div class="form-hint">Local HR authority if requesting access to other employee information such as email or shared drive.</div>
+        </div>
+    </details>
 
-    @await Html.PartialAsync("_RequestFormFields", Model)
+    <details class="section-card" open>
+        <summary>Status &amp; Approval</summary>
+        <div class="section-body request-grid">
+            <div>
+                <label class="form-label" asp-for="RequestForm.SubmitForApproval">Submit for Approval</label>
+                <select class="form-select" asp-for="RequestForm.SubmitForApproval">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+                <div class="form-hint">If Yes, status should change to Submitted for Approval.</div>
+            </div>
+            <div>
+                <label class="form-label required" asp-for="RequestForm.Status">Status</label>
+                <select class="form-select" asp-for="RequestForm.Status">
+                    <option value="">Select status</option>
+                    @foreach (var option in Model.Statuses)
+                    {
+                        <option value="@option.Value">@option.Value</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <label class="form-label required" asp-for="RequestForm.AuthorizedApprover">Authorized Approver</label>
+                <input class="form-control" asp-for="RequestForm.AuthorizedApprover" />
+                <div class="form-hint">Indicate the person responsible for approving your request (usually the direct manager).</div>
+            </div>
+            <div>
+                <label class="form-label required" asp-for="RequestForm.ProgramAdministrator">Program Administrator / Manager</label>
+                <input class="form-control" asp-for="RequestForm.ProgramAdministrator" />
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.RdoApprover">RDO Approver</label>
+                <input class="form-control" asp-for="RequestForm.RdoApprover" />
+                <div class="form-hint">Required when any access marked "RDO Approval Required" is selected (e.g., O365 E3).</div>
+            </div>
+        </div>
+        <div class="section-body">
+            <label class="form-label" asp-for="RequestForm.RejectionReason">Rejection Reason</label>
+            <textarea class="form-control" asp-for="RequestForm.RejectionReason" rows="2"></textarea>
+            <div class="form-hint">Only required when Status = Rejected.</div>
+        </div>
+    </details>
+
+    <details class="section-card" open>
+        <summary>Email / Network Access</summary>
+        <div class="section-body request-grid">
+            <div>
+                <label class="form-label" asp-for="RequestForm.EmailAccount">Email Account</label>
+                <select class="form-select" asp-for="RequestForm.EmailAccount">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.AccountEnableDisable">Account Enable/Disable</label>
+                <select class="form-select" asp-for="RequestForm.AccountEnableDisable">
+                    <option value="">Select</option>
+                    <option>No change</option>
+                    <option>Enable</option>
+                    <option>Disable</option>
+                </select>
+                <div class="form-hint">If Disable, provide forwarding email address.</div>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.ForwardingEmailAddress">Forwarding Email Address</label>
+                <input class="form-control" asp-for="RequestForm.ForwardingEmailAddress" />
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.AssignedAccountUsername">Assigned Account Username</label>
+                <input class="form-control" asp-for="RequestForm.AssignedAccountUsername" />
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.Office365License">Office365</label>
+                <select class="form-select" asp-for="RequestForm.Office365License">
+                    <option value="">Select license</option>
+                    @foreach (var option in Model.Office365Licenses)
+                    {
+                        <option value="@option.Value">@option.Value</option>
+                    }
+                </select>
+                <div class="form-hint">E3 license requires RDO approval.</div>
+            </div>
+        </div>
+        <div class="section-body">
+            <label class="form-label" asp-for="RequestForm.AdditionalMicrosoftProducts">Additional Microsoft Products</label>
+            <div class="row row-cols-1 row-cols-md-2 g-2">
+                @foreach (var option in Model.AdditionalMicrosoftProductOptions)
+                {
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="SelectedAdditionalMicrosoftProducts" value="@option.Value" id="msprod-@option.Id" />
+                            <label class="form-check-label" for="msprod-@option.Id">@option.Value</label>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="form-hint">MS Project and Visio install to local dedicated devices.</div>
+        </div>
+        <div class="section-body request-grid">
+            <div>
+                <label class="form-label" asp-for="RequestForm.CreateEmailGroups">Create Email Groups</label>
+                <select class="form-select" asp-for="RequestForm.CreateEmailGroups">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.SharePointSiteUrl">SharePoint Site URL</label>
+                <input class="form-control" asp-for="RequestForm.SharePointSiteUrl" />
+                <div class="form-hint">If requesting SharePoint access, enter the site URL if known.</div>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.SharePointSiteDescription">SharePoint Site Description</label>
+                <input class="form-control" asp-for="RequestForm.SharePointSiteDescription" />
+            </div>
+        </div>
+        <div class="section-body">
+            <label class="form-label" asp-for="RequestForm.ExistingEmailGroups">Existing Email Groups</label>
+            <textarea class="form-control" asp-for="RequestForm.ExistingEmailGroups" rows="2"></textarea>
+            <div class="form-hint">Default program groups are added automatically.</div>
+        </div>
+        <div class="section-body">
+            <label class="form-label" asp-for="RequestForm.AdditionalSharepointAccess">Additional SharePoint Access</label>
+            <textarea class="form-control" asp-for="RequestForm.AdditionalSharepointAccess" rows="2"></textarea>
+            <div class="form-hint">Program site access is automatic for staff; use this for non-standard sites/libraries.</div>
+        </div>
+        <div class="section-body">
+            <label class="form-label" asp-for="RequestForm.NetworkSharedDrives">Network Shared Drives</label>
+            <textarea class="form-control" asp-for="RequestForm.NetworkSharedDrives" rows="2"></textarea>
+            <div class="form-hint">Users receive a personal shared drive by default.</div>
+        </div>
+    </details>
+
+    <details class="section-card" open>
+        <summary>Finance / HR Access</summary>
+        <div class="section-body request-grid">
+            <div>
+                <label class="form-label" asp-for="RequestForm.TopAccess">TOP Access</label>
+                <select class="form-select" asp-for="RequestForm.TopAccess">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+        </div>
+        <div class="section-body">
+            <label class="form-label" asp-for="RequestForm.KronosAccessTypes">Type of Kronos Access</label>
+            <div class="row row-cols-1 row-cols-md-2 g-2">
+                @foreach (var option in new[] { "Mobile timestamp", "PC timestamp", "BOM/OC access", "Managers access" })
+                {
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="SelectedKronosAccessTypes" value="@option" id="kronos-@option.Replace(" ", "-")" />
+                            <label class="form-check-label" for="kronos-@option.Replace(" ", "-")">@option</label>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="section-body">
+            <label class="form-label" asp-for="RequestForm.KronosAccessDetails">Kronos Access Details</label>
+            <textarea class="form-control" asp-for="RequestForm.KronosAccessDetails" rows="2"></textarea>
+        </div>
+        <div class="section-body request-grid">
+            <div>
+                <label class="form-label" asp-for="RequestForm.LawsonAccess">Lawson Access</label>
+                <select class="form-select" asp-for="RequestForm.LawsonAccess">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+        </div>
+        <div class="section-body">
+            <label class="form-label" asp-for="RequestForm.AdditionalLawsonAccess">Additional Lawson Access</label>
+            <div class="row row-cols-1 row-cols-md-2 g-2">
+                @foreach (var option in new[] { "Excel Query", "Upload (Excel Add-In)", "Upload (imdbb)", "Document Express", "Crystal Reports (Authoring Tool for Lawson)" })
+                {
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="SelectedAdditionalLawsonAccess" value="@option" id="lawson-@option.Replace(" ", "-")" />
+                            <label class="form-check-label" for="lawson-@option.Replace(" ", "-")">@option</label>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="section-body request-grid">
+            <div>
+                <label class="form-label" asp-for="RequestForm.MileageAccess">Mileage Access</label>
+                <select class="form-select" asp-for="RequestForm.MileageAccess">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.ComericaBankingAccess">Comerica Banking Access</label>
+                <select class="form-select" asp-for="RequestForm.ComericaBankingAccess">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+                <div class="form-hint">Reserved for Finance staff; requires finance justification.</div>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.TrustRepPayeeAccess">Trust &amp; Rep Payee Access</label>
+                <select class="form-select" asp-for="RequestForm.TrustRepPayeeAccess">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.QuickbooksAccess">Quickbooks Access</label>
+                <select class="form-select" asp-for="RequestForm.QuickbooksAccess">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.CoWorkerAccess">Co-worker Access</label>
+                <select class="form-select" asp-for="RequestForm.CoWorkerAccess">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+        </div>
+        <div class="section-body">
+            <label class="form-label" asp-for="RequestForm.AdditionalHrFinanceAccess">Additional HR/Finance Access</label>
+            <textarea class="form-control" asp-for="RequestForm.AdditionalHrFinanceAccess" rows="2"></textarea>
+        </div>
+    </details>
+
+    <details class="section-card" open>
+        <summary>EHR Access</summary>
+        <div class="section-body request-grid">
+            <div>
+                <label class="form-label" asp-for="RequestForm.OrderConnectAccess">OrderConnect Access</label>
+                <select class="form-select" asp-for="RequestForm.OrderConnectAccess">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+                <div class="form-hint">Include Avatar System Code Reference Guide link in final implementation.</div>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.CaminarAccess">Caminar Access</label>
+                <select class="form-select" asp-for="RequestForm.CaminarAccess">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.AvatarAccess">Avatar Access</label>
+                <select class="form-select" asp-for="RequestForm.AvatarAccess">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+                <div class="form-hint">Include link to Avatar System Code Reference Guide.</div>
+            </div>
+        </div>
+    </details>
+
+    <details class="section-card" open>
+        <summary>Adverse Events / BI Access</summary>
+        <div class="section-body request-grid">
+            <div>
+                <label class="form-label" asp-for="RequestForm.AdverseEventSupervisorAccess">Adverse Event Supervisor Access</label>
+                <select class="form-select" asp-for="RequestForm.AdverseEventSupervisorAccess">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+                <div class="form-hint">All program employees have access to view/create their program's adverse events by default.</div>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.AdverseEventAdditionalProgramAccess">Adverse Event Additional Program Access</label>
+                <select class="form-select" asp-for="RequestForm.AdverseEventAdditionalProgramAccess">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.BusinessIntelligenceRole">Business Intelligence</label>
+                <select class="form-select" asp-for="RequestForm.BusinessIntelligenceRole">
+                    <option value="">Select role</option>
+                    @foreach (var option in Model.BusinessIntelligenceRoles)
+                    {
+                        <option value="@option.Value">@option.Value</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.AdverseEventNonEmployeeAccess">Adverse Event Non-Employee Access</label>
+                <select class="form-select" asp-for="RequestForm.AdverseEventNonEmployeeAccess">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+        </div>
+    </details>
+
+    <details class="section-card" open>
+        <summary>Telehealth Access</summary>
+        <div class="section-body request-grid">
+            <div>
+                <label class="form-label" asp-for="RequestForm.TelehealthAccess">Telehealth Access</label>
+                <select class="form-select" asp-for="RequestForm.TelehealthAccess">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.NextTelehealthSession">Next Telehealth Session</label>
+                <input class="form-control" asp-for="RequestForm.NextTelehealthSession" />
+            </div>
+        </div>
+        <div class="section-body">
+            <label class="form-label" asp-for="RequestForm.AdditionalComments">Additional Comments</label>
+            <textarea class="form-control" asp-for="RequestForm.AdditionalComments" rows="2"></textarea>
+        </div>
+    </details>
+
+    <details class="section-card" open>
+        <summary>Pharmerica Access</summary>
+        <div class="section-body request-grid">
+            <div>
+                <label class="form-label" asp-for="RequestForm.PharmericaAccess">Pharmerica Access</label>
+                <select class="form-select" asp-for="RequestForm.PharmericaAccess">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.PharmericaUserRole">User Role</label>
+                <select class="form-select" asp-for="RequestForm.PharmericaUserRole">
+                    <option value="">Select role</option>
+                    @foreach (var option in Model.PharmericaUserRoles)
+                    {
+                        <option value="@option.Value">@option.Value</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.PharmericaUsername">Username</label>
+                <input class="form-control" asp-for="RequestForm.PharmericaUsername" />
+            </div>
+        </div>
+    </details>
+
+    <details class="section-card" open>
+        <summary>Call Center Access</summary>
+        <div class="section-body request-grid">
+            <div>
+                <label class="form-label" asp-for="RequestForm.CallCenterAccess">Call Center Access</label>
+                <select class="form-select" asp-for="RequestForm.CallCenterAccess">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+        </div>
+    </details>
+
+    <details class="section-card" open>
+        <summary>Additional Access</summary>
+        <div class="section-body request-grid">
+            <div>
+                <label class="form-label" asp-for="RequestForm.AdobeSignAccount">Adobe Sign Account</label>
+                <select class="form-select" asp-for="RequestForm.AdobeSignAccount">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.CopilotLicense">Copilot License</label>
+                <select class="form-select" asp-for="RequestForm.CopilotLicense">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+                <div class="form-hint">Show license cost note in final implementation.</div>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.SmartsheetLicense">Smartsheet License</label>
+                <select class="form-select" asp-for="RequestForm.SmartsheetLicense">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label" asp-for="RequestForm.EFax">E-Fax</label>
+                <select class="form-select" asp-for="RequestForm.EFax">
+                    <option value="">Select</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+            </div>
+        </div>
+    </details>
 
     <button type="submit" class="btn btn-primary">Submit request</button>
 </form>
