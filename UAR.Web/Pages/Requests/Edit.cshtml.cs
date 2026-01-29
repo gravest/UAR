@@ -7,6 +7,12 @@ namespace UAR.Web.Pages.Requests;
 
 public class EditModel : RequestFormPageModel
 {
+    private static readonly HashSet<string> TerminalStatuses = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "Rejected",
+        "Approved",
+        "Completed"
+    };
     private readonly DropdownService _dropdownService;
     private readonly ProgramLookupService _programService;
     private readonly RequestService _requestService;
@@ -41,6 +47,18 @@ public class EditModel : RequestFormPageModel
     {
         await LoadOptionsAsync();
 
+        var existingRequest = await _requestService.GetByIdAsync(RequestForm.Id);
+        if (existingRequest is null)
+        {
+            return NotFound();
+        }
+
+        if (IsTerminalStatus(existingRequest.Status))
+        {
+            ModelState.AddModelError(string.Empty, $"This request is {existingRequest.Status} and can no longer be updated.");
+            return Page();
+        }
+
         if (!ModelState.IsValid)
         {
             return Page();
@@ -53,6 +71,11 @@ public class EditModel : RequestFormPageModel
 
         await _requestService.UpdateAsync(RequestForm);
         return RedirectToPage("/Requests/Details", new { id = RequestForm.Id });
+    }
+
+    public bool IsTerminalStatus(string? status)
+    {
+        return !string.IsNullOrWhiteSpace(status) && TerminalStatuses.Contains(status);
     }
 
     private async Task LoadOptionsAsync()

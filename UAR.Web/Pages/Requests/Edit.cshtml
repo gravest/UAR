@@ -4,6 +4,17 @@
 <h2 class="mb-3">Edit User Access Request</h2>
 <p class="text-muted">Update fields below and save changes. Required fields are marked with an asterisk (*).</p>
 
+@{
+    var isTerminalStatus = Model.IsTerminalStatus(Model.RequestForm.Status);
+}
+
+@if (isTerminalStatus)
+{
+    <div class="alert alert-warning" role="alert">
+        This request is @Model.RequestForm.Status and can no longer be updated.
+    </div>
+}
+
 <form method="post" class="mb-5">
     <input type="hidden" asp-for="RequestForm.Id" />
     <input type="hidden" asp-for="RequestForm.RequestNumber" />
@@ -17,6 +28,6 @@
 
     @await Html.PartialAsync("_RequestFormFields", Model)
 
-    <button type="submit" class="btn btn-primary">Save changes</button>
+    <button type="submit" class="btn btn-primary" disabled="@(isTerminalStatus ? "disabled" : null)">Save changes</button>
     <a class="btn btn-outline-secondary ms-2" asp-page="/Requests/Details" asp-route-id="@Model.RequestForm.Id">Cancel</a>
 </form>
