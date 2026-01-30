@@ -45,7 +45,7 @@ public class EditModel : RequestFormPageModel
 
         if (ApprovalWorkflow.IsFinalStatus(RequestForm.Status))
         {
-            return RedirectToPage("/Requests/ReadOnly", new { id });
+            return RedirectToPage("/Requests/Details", new { id });
         }
 
         return Page();
