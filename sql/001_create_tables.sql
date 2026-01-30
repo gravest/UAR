@@ -1,3 +1,27 @@
+IF OBJECT_ID('dbo.UarRequests', 'U') IS NOT NULL
+BEGIN
+    DROP TABLE dbo.UarRequests;
+END
+GO
+
+IF OBJECT_ID('dbo.Programs', 'U') IS NOT NULL
+BEGIN
+    DROP TABLE dbo.Programs;
+END
+GO
+
+IF OBJECT_ID('dbo.Users', 'U') IS NOT NULL
+BEGIN
+    DROP TABLE dbo.Users;
+END
+GO
+
+IF OBJECT_ID('dbo.DropdownOptions', 'U') IS NOT NULL
+BEGIN
+    DROP TABLE dbo.DropdownOptions;
+END
+GO
+
 CREATE TABLE dbo.DropdownOptions (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     Category NVARCHAR(100) NOT NULL,

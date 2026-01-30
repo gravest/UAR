@@ -1,11 +1,15 @@
 @page "{id:int}"
 @model UAR.Web.Pages.Requests.EditModel
+@using UAR.Web.Services
 
 <h2 class="mb-3">Edit User Access Request</h2>
 <p class="text-muted">Update fields below and save changes. Required fields are marked with an asterisk (*).</p>
 
 @{
-    var isTerminalStatus = Model.IsTerminalStatus(Model.RequestForm.Status);
+    var currentStatus = Model.RequestForm.Status;
+    var isTerminalStatus = Model.IsTerminalStatus(currentStatus);
+    var isDraft = ApprovalWorkflow.IsDraftStatus(currentStatus);
+    var isPending = ApprovalWorkflow.IsPendingApprovalStatus(currentStatus);
 }
 
 @if (isTerminalStatus)
@@ -28,6 +32,37 @@
 
     @await Html.PartialAsync("_RequestFormFields", Model)
 
-    <button type="submit" class="btn btn-primary" disabled="@(isTerminalStatus ? "disabled" : null)">Save changes</button>
-    <a class="btn btn-outline-secondary ms-2" asp-page="/Requests/Details" asp-route-id="@Model.RequestForm.Id">Cancel</a>
+    <div class="d-flex flex-wrap gap-2">
+        @if (!isTerminalStatus)
+        {
+            if (isDraft)
+            {
+                <button type="submit" class="btn btn-outline-secondary" name="WorkflowAction" value="SaveDraft">
+                    Save as Draft
+                </button>
+                <button type="submit" class="btn btn-primary" name="WorkflowAction" value="SubmitForApproval">
+                    Submit for Approval
+                </button>
+            }
+            else if (isPending)
+            {
+                <button type="submit" class="btn btn-outline-secondary" name="WorkflowAction" value="SavePending">
+                    Save changes
+                </button>
+                <button type="submit" class="btn btn-success" name="WorkflowAction" value="Approve">
+                    Approve
+                </button>
+                <button type="submit" class="btn btn-danger" name="WorkflowAction" value="Reject">
+                    Reject
+                </button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-outline-secondary" name="WorkflowAction" value="SavePending">
+                    Save changes
+                </button>
+            }
+        }
+        <a class="btn btn-outline-secondary ms-md-2" asp-page="/Requests/Details" asp-route-id="@Model.RequestForm.Id">Cancel</a>
+    </div>
 </form>

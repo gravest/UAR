@@ -8,7 +8,6 @@ builder.Services.AddRazorPages()
         options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
 builder.Services.AddScoped<DbConnectionFactory>();
 builder.Services.AddScoped<DropdownService>();
-builder.Services.AddScoped<ApprovalEmailService>();
 builder.Services.AddScoped<RequestService>();
 builder.Services.AddScoped<UserLookupService>();
 builder.Services.AddScoped<ProgramLookupService>();
@@ -34,7 +33,7 @@ app.MapPost("/approvals/manager/{id:int}/approve", async (
     int id,
     HttpRequest httpRequest,
     RequestService requestService,
-    ApprovalEmailService approvalEmailService) =>
+    EmailService emailService) =>
 {
     var request = await requestService.GetByIdAsync(id);
     if (request is null)
@@ -53,7 +52,7 @@ app.MapPost("/approvals/manager/{id:int}/approve", async (
         await requestService.UpdateAsync(request);
 
         var baseUrl = $"{httpRequest.Scheme}://{httpRequest.Host}";
-        await approvalEmailService.SendRdoApprovalRequestAsync(request, baseUrl);
+        await emailService.SendRdoApprovalRequestAsync(request, baseUrl);
 
         return Results.Ok(request);
     }

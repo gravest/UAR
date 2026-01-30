@@ -7,10 +7,6 @@ namespace UAR.Web.Pages.Requests;
 
 public class CreateModel : PageModel
 {
-    private const string DraftStatus = "Saved As Draft";
-    private const string PendingApprovalStatus = "Pending Manager Approval";
-    private const string RejectedStatus = "Rejected";
-
     private readonly DropdownService _dropdownService;
     private readonly ProgramLookupService _programService;
     private readonly RequestService _requestService;
@@ -43,6 +39,9 @@ public class CreateModel : PageModel
     [BindProperty]
     public string[] SelectedAdditionalLawsonAccess { get; set; } = Array.Empty<string>();
 
+    [BindProperty]
+    public string? WorkflowAction { get; set; }
+
     public IReadOnlyList<DropdownOption> Companies { get; private set; } = Array.Empty<DropdownOption>();
     public IReadOnlyList<DropdownOption> EmployeeStatuses { get; private set; } = Array.Empty<DropdownOption>();
     public IReadOnlyList<DropdownOption> EmployeeTypes { get; private set; } = Array.Empty<DropdownOption>();
@@ -58,7 +57,7 @@ public class CreateModel : PageModel
     {
         await LoadOptionsAsync();
         SetDefaultDesiredEffectiveDate();
-        RequestForm.Status = DraftStatus;
+        RequestForm.Status = ApprovalWorkflow.DraftStatus;
     }
 
     public async Task<IActionResult> OnPostAsync()
@@ -98,50 +97,52 @@ public class CreateModel : PageModel
         var id = await _requestService.CreateAsync(RequestForm);
         RequestForm.Id = id;
 
-        if (IsSubmittedForApproval(RequestForm))
+        EmailPreview? preview = null;
+        if (ApprovalWorkflow.IsSubmittingForApproval(RequestForm))
         {
-            await _emailService.SendApproverEmailAsync(RequestForm);
+            preview = await _emailService.SendApproverEmailAsync(RequestForm);
         }
 
+        var action = WorkflowAction?.Trim();
+        if (string.Equals(action, "SubmitForApproval", StringComparison.OrdinalIgnoreCase))
+        {
+            if (preview is not null)
+            {
+                StoreEmailPreview(preview);
+            }
+            return RedirectToPage("/Requests/Index");
+        }
+
+        if (preview is not null)
+        {
+            StoreEmailPreview(preview);
+        }
         return RedirectToPage("/Requests/Details", new { id });
     }
 
     private void ApplyWorkflowStatus()
     {
-        var submitRequested = IsSubmitRequested(RequestForm.SubmitForApproval);
-        var targetStatus = submitRequested ? PendingApprovalStatus : DraftStatus;
+        var action = WorkflowAction?.Trim();
+        var submitRequested = string.Equals(action, "SubmitForApproval", StringComparison.OrdinalIgnoreCase);
+        var targetStatus = submitRequested
+            ? ApprovalWorkflow.PendingManagerApprovalStatus
+            : ApprovalWorkflow.DraftStatus;
 
         ModelState.Remove(nameof(RequestForm.Status));
         ModelState.Remove(nameof(RequestForm.SubmitForApproval));
 
-        if (!string.IsNullOrWhiteSpace(RequestForm.Status)
-            && !string.Equals(RequestForm.Status, targetStatus, StringComparison.OrdinalIgnoreCase))
-        {
-            ModelState.AddModelError(nameof(RequestForm.Status),
-                "Draft requests can only move to pending approval when submitted.");
-        }
-
         RequestForm.Status = targetStatus;
-        RequestForm.SubmitForApproval = null;
+        RequestForm.SubmitForApproval = submitRequested ? "Yes" : null;
     }
 
     private void ValidateStatusRequirements()
     {
-        if (IsRejectedStatus(RequestForm.Status) && string.IsNullOrWhiteSpace(RequestForm.RejectionReason))
+        if (ApprovalWorkflow.IsRejectedStatus(RequestForm.Status)
+            && string.IsNullOrWhiteSpace(RequestForm.RejectionReason))
         {
             ModelState.AddModelError(nameof(RequestForm.RejectionReason),
                 "Rejection reason is required when a request is rejected.");
         }
-    }
-
-    private static bool IsSubmitRequested(string? submitValue)
-    {
-        return string.Equals(submitValue, "Yes", StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static bool IsRejectedStatus(string? status)
-    {
-        return string.Equals(status, RejectedStatus, StringComparison.OrdinalIgnoreCase);
     }
 
     private void SetDefaultDesiredEffectiveDate()
@@ -150,6 +151,14 @@ public class CreateModel : PageModel
         {
             RequestForm.DesiredEffectiveDate = DateTime.Today.AddDays(5).ToString("yyyy-MM-dd");
         }
+    }
+
+    private void StoreEmailPreview(EmailPreview preview)
+    {
+        TempData["DebugEmailSubject"] = preview.Subject;
+        TempData["DebugEmailBody"] = preview.Body;
+        TempData["DebugEmailApproveUrl"] = preview.ApprovalLink;
+        TempData["DebugEmailRejectUrl"] = preview.RejectionLink;
     }
 
     private async Task LoadOptionsAsync()
@@ -166,9 +175,4 @@ public class CreateModel : PageModel
         Programs = await _programService.GetAllAsync();
     }
 
-    private static bool IsSubmittedForApproval(UarRequest request)
-    {
-        return string.Equals(request.SubmitForApproval, "Yes", StringComparison.OrdinalIgnoreCase)
-            || string.Equals(request.Status, "Submitted for Approval", StringComparison.OrdinalIgnoreCase);
-    }
 }

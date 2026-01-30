@@ -1,3 +1,117 @@
+IF OBJECT_ID('dbo.DropdownOptions_GetByCategory', 'P') IS NOT NULL
+BEGIN
+    DROP PROCEDURE dbo.DropdownOptions_GetByCategory;
+END
+GO
+
+IF OBJECT_ID('dbo.DropdownOptions_GetAll', 'P') IS NOT NULL
+BEGIN
+    DROP PROCEDURE dbo.DropdownOptions_GetAll;
+END
+GO
+
+IF OBJECT_ID('dbo.DropdownOptions_Upsert', 'P') IS NOT NULL
+BEGIN
+    DROP PROCEDURE dbo.DropdownOptions_Upsert;
+END
+GO
+
+IF OBJECT_ID('dbo.DropdownOptions_Delete', 'P') IS NOT NULL
+BEGIN
+    DROP PROCEDURE dbo.DropdownOptions_Delete;
+END
+GO
+
+IF OBJECT_ID('dbo.Users_GetAll', 'P') IS NOT NULL
+BEGIN
+    DROP PROCEDURE dbo.Users_GetAll;
+END
+GO
+
+IF OBJECT_ID('dbo.Users_Upsert', 'P') IS NOT NULL
+BEGIN
+    DROP PROCEDURE dbo.Users_Upsert;
+END
+GO
+
+IF OBJECT_ID('dbo.Users_Delete', 'P') IS NOT NULL
+BEGIN
+    DROP PROCEDURE dbo.Users_Delete;
+END
+GO
+
+IF OBJECT_ID('dbo.Programs_GetAll', 'P') IS NOT NULL
+BEGIN
+    DROP PROCEDURE dbo.Programs_GetAll;
+END
+GO
+
+IF OBJECT_ID('dbo.Programs_Upsert', 'P') IS NOT NULL
+BEGIN
+    DROP PROCEDURE dbo.Programs_Upsert;
+END
+GO
+
+IF OBJECT_ID('dbo.Programs_Delete', 'P') IS NOT NULL
+BEGIN
+    DROP PROCEDURE dbo.Programs_Delete;
+END
+GO
+
+IF OBJECT_ID('dbo.UarRequest_Create', 'P') IS NOT NULL
+BEGIN
+    DROP PROCEDURE dbo.UarRequest_Create;
+END
+GO
+
+IF OBJECT_ID('dbo.UarRequest_GetAll', 'P') IS NOT NULL
+BEGIN
+    DROP PROCEDURE dbo.UarRequest_GetAll;
+END
+GO
+
+IF OBJECT_ID('dbo.UarRequest_GetById', 'P') IS NOT NULL
+BEGIN
+    DROP PROCEDURE dbo.UarRequest_GetById;
+END
+GO
+
+IF OBJECT_ID('dbo.UarRequest_Update', 'P') IS NOT NULL
+BEGIN
+    DROP PROCEDURE dbo.UarRequest_Update;
+END
+GO
+
+IF OBJECT_ID('dbo.UarRequest_GetByApprovalToken', 'P') IS NOT NULL
+BEGIN
+    DROP PROCEDURE dbo.UarRequest_GetByApprovalToken;
+END
+GO
+
+IF OBJECT_ID('dbo.UarRequest_GetByRejectionToken', 'P') IS NOT NULL
+BEGIN
+    DROP PROCEDURE dbo.UarRequest_GetByRejectionToken;
+END
+GO
+
+IF OBJECT_ID('dbo.UarRequest_ApproveByToken', 'P') IS NOT NULL
+BEGIN
+    DROP PROCEDURE dbo.UarRequest_ApproveByToken;
+END
+GO
+
+IF OBJECT_ID('dbo.UarRequest_RejectByToken', 'P') IS NOT NULL
+BEGIN
+    DROP PROCEDURE dbo.UarRequest_RejectByToken;
+END
+GO
+
+IF OBJECT_ID('dbo.UarRequest_Delete', 'P') IS NOT NULL
+BEGIN
+    DROP PROCEDURE dbo.UarRequest_Delete;
+END
+GO
+
 CREATE OR ALTER PROCEDURE dbo.DropdownOptions_GetByCategory
     @Category NVARCHAR(100)
 AS
