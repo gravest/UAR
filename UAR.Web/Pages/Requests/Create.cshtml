@@ -1,8 +1,13 @@
 @page
 @model UAR.Web.Pages.Requests.CreateModel
+@using UAR.Web.Services
 
 <h2 class="mb-3">User Access Request Form</h2>
 <p class="text-muted">Fields marked with an asterisk (*) are required.</p>
+
+@{
+    var isDraft = ApprovalWorkflow.IsDraftStatus(Model.RequestForm.Status);
+}
 
 <form method="post" class="mb-5">
     <div asp-validation-summary="All" class="text-danger mb-3"></div>
@@ -623,9 +628,12 @@
     </div>
 
     <div class="d-flex flex-wrap gap-2">
-        <button type="submit" class="btn btn-outline-secondary" name="WorkflowAction" value="SaveDraft">
-            Save as Draft
-        </button>
+        @if (isDraft)
+        {
+            <button type="submit" class="btn btn-outline-secondary" name="WorkflowAction" value="SaveDraft">
+                Save as Draft
+            </button>
+        }
         <button type="submit" class="btn btn-primary" name="WorkflowAction" value="SubmitForApproval">
             Submit for Approval
         </button>
