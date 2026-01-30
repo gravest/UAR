@@ -75,6 +75,11 @@ public class EmailService
                    $"Approve: {approveUrl}\n" +
                    $"Reject: {rejectUrl}";
 
+        if (_options.DebugEmailPopup)
+        {
+            return Task.CompletedTask;
+        }
+
         return SendAsync(recipient, subject, body);
     }
 
@@ -98,6 +103,11 @@ public class EmailService
                    (approved ? string.Empty : $"Rejection reason: {request.RejectionReason}\n") +
                    $"\nView details: {detailsLink}";
 
+        if (_options.DebugEmailPopup)
+        {
+            return Task.CompletedTask;
+        }
+
         return SendAsync(recipient, subject, body);
     }
 
@@ -116,6 +126,11 @@ public class EmailService
                    $"Employee: {request.EmployeeFirstName} {request.EmployeeLastName}\n" +
                    $"Program(s): {request.Program1} {request.Program2} {request.Program3}\n" +
                    $"\nRequested items:\n{requestedItems}";
+
+        if (_options.DebugEmailPopup)
+        {
+            return Task.CompletedTask;
+        }
 
         return SendAsync(recipient, subject, body);
     }
