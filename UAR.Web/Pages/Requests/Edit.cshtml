@@ -30,16 +30,7 @@
         ViewData["UarNumberHint"] = "UAR number is read-only once created.";
     }
 
-    @if (isTerminalStatus)
-    {
-        <fieldset disabled>
-            @await Html.PartialAsync("_RequestFormFields", Model)
-        </fieldset>
-    }
-    else
-    {
-        @await Html.PartialAsync("_RequestFormFields", Model)
-    }
+    @await Html.PartialAsync("_RequestFormFields", Model)
 
     <div class="d-flex flex-wrap gap-2">
         @if (!isTerminalStatus)

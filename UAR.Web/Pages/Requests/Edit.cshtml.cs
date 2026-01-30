@@ -43,6 +43,11 @@ public class EditModel : RequestFormPageModel
         SelectedKronosAccessTypes = SplitMultiSelect(RequestForm.KronosAccessTypes);
         SelectedAdditionalLawsonAccess = SplitMultiSelect(RequestForm.AdditionalLawsonAccess);
 
+        if (ApprovalWorkflow.IsFinalStatus(RequestForm.Status))
+        {
+            return RedirectToPage("/Requests/ReadOnly", new { id });
+        }
+
         return Page();
     }
 

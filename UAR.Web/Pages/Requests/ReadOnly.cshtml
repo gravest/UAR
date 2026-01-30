@@ -1,0 +1,313 @@
+@page "{id:int}"
+@model UAR.Web.Pages.Requests.ReadOnlyModel
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="mb-1">Request @Model.RequestDetails?.RequestNumber</h2>
+        <p class="text-muted mb-0">Display-only view for printing.</p>
+    </div>
+    <div class="d-flex gap-2 no-print">
+        <button type="button" class="btn btn-outline-primary" onclick="window.print()">Print</button>
+        <a class="btn btn-outline-secondary" asp-page="/Requests/Details" asp-route-id="@Model.RequestDetails?.Id">Back</a>
+    </div>
+</div>
+
+@if (Model.RequestDetails is null)
+{
+    <div class="alert alert-warning">Request not found.</div>
+}
+else
+{
+    <style>
+        @@media print {
+            .no-print { display: none !important; }
+        }
+    </style>
+
+    <div class="section-card p-3 mb-3">
+        <h5 class="mb-3">Workflow Timeline</h5>
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Status</dt>
+            <dd class="col-sm-9">@Model.RequestDetails.Status</dd>
+            <dt class="col-sm-3">Submitted On</dt>
+            <dd class="col-sm-9">@Model.RequestDetails.SubmittedOn.ToLocalTime().ToString("g")</dd>
+            <dt class="col-sm-3">Approval Decision</dt>
+            <dd class="col-sm-9">@Model.RequestDetails.ApprovalDecision</dd>
+            <dt class="col-sm-3">Approved On</dt>
+            <dd class="col-sm-9">@Model.RequestDetails.ApprovedOn?.ToLocalTime().ToString("g")</dd>
+            <dt class="col-sm-3">Approved By</dt>
+            <dd class="col-sm-9">@Model.RequestDetails.ApprovedBy</dd>
+            <dt class="col-sm-3">Rejected On</dt>
+            <dd class="col-sm-9">@Model.RequestDetails.RejectedOn?.ToLocalTime().ToString("g")</dd>
+            <dt class="col-sm-3">Rejected By</dt>
+            <dd class="col-sm-9">@Model.RequestDetails.RejectedBy</dd>
+        </dl>
+    </div>
+
+    <div class="section-card p-3">
+        <h5 class="mb-3">Request Details</h5>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Company</label>
+                <input class="form-control" value="@Model.RequestDetails.Company" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Request Number</label>
+                <input class="form-control" value="@Model.RequestDetails.RequestNumber" readonly />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Employee First Name</label>
+                <input class="form-control" value="@Model.RequestDetails.EmployeeFirstName" readonly />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Employee Middle Name</label>
+                <input class="form-control" value="@Model.RequestDetails.EmployeeMiddleName" readonly />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Employee Last Name</label>
+                <input class="form-control" value="@Model.RequestDetails.EmployeeLastName" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Job Title</label>
+                <input class="form-control" value="@Model.RequestDetails.JobTitle" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Desired Effective Date</label>
+                <input class="form-control" value="@Model.RequestDetails.DesiredEffectiveDate" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Requestor Phone Number</label>
+                <input class="form-control" value="@Model.RequestDetails.RequestorPhoneNumber" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Employee Status</label>
+                <input class="form-control" value="@Model.RequestDetails.EmployeeStatus" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Employee Type</label>
+                <input class="form-control" value="@Model.RequestDetails.EmployeeType" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Transfer From Program</label>
+                <input class="form-control" value="@Model.RequestDetails.TransferFromProgram" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Leave Of Absence</label>
+                <input class="form-control" value="@Model.RequestDetails.LeaveOfAbsence" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Region Name</label>
+                <input class="form-control" value="@Model.RequestDetails.RegionName" readonly />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Program 1</label>
+                <input class="form-control" value="@Model.RequestDetails.Program1" readonly />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Program 2</label>
+                <input class="form-control" value="@Model.RequestDetails.Program2" readonly />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Program 3</label>
+                <input class="form-control" value="@Model.RequestDetails.Program3" readonly />
+            </div>
+            <div class="col-md-12">
+                <label class="form-label">Other Programs</label>
+                <textarea class="form-control" rows="2" readonly>@Model.RequestDetails.OtherPrograms</textarea>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Employee Device Types</label>
+                <input class="form-control" value="@Model.RequestDetails.EmployeeDeviceTypes" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Other Device Type</label>
+                <input class="form-control" value="@Model.RequestDetails.OtherDeviceType" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">HR Representative Name</label>
+                <input class="form-control" value="@Model.RequestDetails.HrRepresentativeName" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Authorized Approver</label>
+                <input class="form-control" value="@Model.RequestDetails.AuthorizedApprover" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Program Administrator</label>
+                <input class="form-control" value="@Model.RequestDetails.ProgramAdministrator" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">RDO Approver</label>
+                <input class="form-control" value="@Model.RequestDetails.RdoApprover" readonly />
+            </div>
+            <div class="col-md-12">
+                <label class="form-label">Rejection Reason</label>
+                <textarea class="form-control" rows="2" readonly>@Model.RequestDetails.RejectionReason</textarea>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Email Account</label>
+                <input class="form-control" value="@Model.RequestDetails.EmailAccount" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Account Enable/Disable</label>
+                <input class="form-control" value="@Model.RequestDetails.AccountEnableDisable" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Forwarding Email Address</label>
+                <input class="form-control" value="@Model.RequestDetails.ForwardingEmailAddress" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Assigned Account Username</label>
+                <input class="form-control" value="@Model.RequestDetails.AssignedAccountUsername" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Office365 License</label>
+                <input class="form-control" value="@Model.RequestDetails.Office365License" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Additional Microsoft Products</label>
+                <input class="form-control" value="@Model.RequestDetails.AdditionalMicrosoftProducts" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Create Email Groups</label>
+                <input class="form-control" value="@Model.RequestDetails.CreateEmailGroups" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">SharePoint Site URL</label>
+                <input class="form-control" value="@Model.RequestDetails.SharePointSiteUrl" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">SharePoint Site Description</label>
+                <input class="form-control" value="@Model.RequestDetails.SharePointSiteDescription" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Existing Email Groups</label>
+                <input class="form-control" value="@Model.RequestDetails.ExistingEmailGroups" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Additional SharePoint Access</label>
+                <input class="form-control" value="@Model.RequestDetails.AdditionalSharepointAccess" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Network Shared Drives</label>
+                <input class="form-control" value="@Model.RequestDetails.NetworkSharedDrives" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">TOP Access</label>
+                <input class="form-control" value="@Model.RequestDetails.TopAccess" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Kronos Access Types</label>
+                <input class="form-control" value="@Model.RequestDetails.KronosAccessTypes" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Kronos Access Details</label>
+                <input class="form-control" value="@Model.RequestDetails.KronosAccessDetails" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Lawson Access</label>
+                <input class="form-control" value="@Model.RequestDetails.LawsonAccess" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Additional Lawson Access</label>
+                <input class="form-control" value="@Model.RequestDetails.AdditionalLawsonAccess" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Mileage Access</label>
+                <input class="form-control" value="@Model.RequestDetails.MileageAccess" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Comerica Banking Access</label>
+                <input class="form-control" value="@Model.RequestDetails.ComericaBankingAccess" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Trust Rep Payee Access</label>
+                <input class="form-control" value="@Model.RequestDetails.TrustRepPayeeAccess" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Quickbooks Access</label>
+                <input class="form-control" value="@Model.RequestDetails.QuickbooksAccess" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">CoWorker Access</label>
+                <input class="form-control" value="@Model.RequestDetails.CoWorkerAccess" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Additional HR/Finance Access</label>
+                <input class="form-control" value="@Model.RequestDetails.AdditionalHrFinanceAccess" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">OrderConnect Access</label>
+                <input class="form-control" value="@Model.RequestDetails.OrderConnectAccess" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Caminar Access</label>
+                <input class="form-control" value="@Model.RequestDetails.CaminarAccess" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Avatar Access</label>
+                <input class="form-control" value="@Model.RequestDetails.AvatarAccess" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Adverse Event Supervisor Access</label>
+                <input class="form-control" value="@Model.RequestDetails.AdverseEventSupervisorAccess" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Adverse Event Additional Program Access</label>
+                <input class="form-control" value="@Model.RequestDetails.AdverseEventAdditionalProgramAccess" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Business Intelligence Role</label>
+                <input class="form-control" value="@Model.RequestDetails.BusinessIntelligenceRole" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Adverse Event Non-Employee Access</label>
+                <input class="form-control" value="@Model.RequestDetails.AdverseEventNonEmployeeAccess" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Telehealth Access</label>
+                <input class="form-control" value="@Model.RequestDetails.TelehealthAccess" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Next Telehealth Session</label>
+                <input class="form-control" value="@Model.RequestDetails.NextTelehealthSession" readonly />
+            </div>
+            <div class="col-md-12">
+                <label class="form-label">Additional Comments</label>
+                <textarea class="form-control" rows="2" readonly>@Model.RequestDetails.AdditionalComments</textarea>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Pharmerica Access</label>
+                <input class="form-control" value="@Model.RequestDetails.PharmericaAccess" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Pharmerica User Role</label>
+                <input class="form-control" value="@Model.RequestDetails.PharmericaUserRole" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Pharmerica Username</label>
+                <input class="form-control" value="@Model.RequestDetails.PharmericaUsername" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Call Center Access</label>
+                <input class="form-control" value="@Model.RequestDetails.CallCenterAccess" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Adobe Sign Account</label>
+                <input class="form-control" value="@Model.RequestDetails.AdobeSignAccount" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Copilot License</label>
+                <input class="form-control" value="@Model.RequestDetails.CopilotLicense" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Smartsheet License</label>
+                <input class="form-control" value="@Model.RequestDetails.SmartsheetLicense" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">E-Fax</label>
+                <input class="form-control" value="@Model.RequestDetails.EFax" readonly />
+            </div>
+        </div>
+    </div>
+}
