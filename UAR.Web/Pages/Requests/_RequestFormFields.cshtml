@@ -9,14 +9,6 @@
         </h2>
         <div id="uar-general" class="accordion-collapse collapse show" aria-labelledby="uar-general-heading" data-bs-parent="#uarAccordion">
             <div class="accordion-body section-body request-grid">
-                @if (ViewData["UarNumberValue"] is not null)
-                {
-                    <div>
-                        <label class="form-label required">UAR Number</label>
-                        <input class="form-control" value="@ViewData["UarNumberValue"]" readonly />
-                        <div class="form-hint">@ViewData["UarNumberHint"]</div>
-                    </div>
-                }
         <div>
             <label class="form-label" asp-for="RequestForm.EmployeeNameChange">Employee Name Change</label>
             <select class="form-select" asp-for="RequestForm.EmployeeNameChange">

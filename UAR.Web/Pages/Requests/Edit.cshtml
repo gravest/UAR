@@ -5,6 +5,12 @@
 <h2 class="mb-3">Edit User Access Request</h2>
 <p class="text-muted">Update fields below and save changes. Required fields are marked with an asterisk (*).</p>
 
+<div class="mb-3">
+    <label class="form-label">UAR Number</label>
+    <div class="form-control-static">@Model.RequestForm.RequestNumber</div>
+    <div class="form-hint">UAR number is read-only once created.</div>
+</div>
+
 @{
     var currentStatus = Model.RequestForm.Status;
     var isTerminalStatus = Model.IsTerminalStatus(currentStatus);
@@ -24,11 +30,6 @@
     <input type="hidden" asp-for="RequestForm.RequestNumber" />
     <input type="hidden" asp-for="RequestForm.SubmittedOn" />
     <div asp-validation-summary="All" class="text-danger mb-3"></div>
-
-    @{
-        ViewData["UarNumberValue"] = Model.RequestForm.RequestNumber;
-        ViewData["UarNumberHint"] = "UAR number is read-only once created.";
-    }
 
     @await Html.PartialAsync("_RequestFormFields", Model)
 
