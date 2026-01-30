@@ -12,6 +12,8 @@ builder.Services.AddScoped<ApprovalEmailService>();
 builder.Services.AddScoped<RequestService>();
 builder.Services.AddScoped<UserLookupService>();
 builder.Services.AddScoped<ProgramLookupService>();
+builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Email"));
+builder.Services.AddScoped<EmailService>();
 
 var app = builder.Build();
 
