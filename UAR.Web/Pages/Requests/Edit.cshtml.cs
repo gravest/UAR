@@ -15,12 +15,18 @@ public class EditModel : RequestFormPageModel
     private readonly DropdownService _dropdownService;
     private readonly ProgramLookupService _programService;
     private readonly RequestService _requestService;
+    private readonly EmailService _emailService;
 
-    public EditModel(DropdownService dropdownService, ProgramLookupService programService, RequestService requestService)
+    public EditModel(
+        DropdownService dropdownService,
+        ProgramLookupService programService,
+        RequestService requestService,
+        EmailService emailService)
     {
         _dropdownService = dropdownService;
         _programService = programService;
         _requestService = requestService;
+        _emailService = emailService;
     }
 
 
@@ -66,6 +72,8 @@ public class EditModel : RequestFormPageModel
         }
 
         await _requestService.UpdateAsync(RequestForm);
+
+        await SendWorkflowEmailsAsync(existingRequest, RequestForm);
         return RedirectToPage("/Requests/Details", new { id = RequestForm.Id });
     }
 
@@ -175,5 +183,40 @@ public class EditModel : RequestFormPageModel
     {
         return values
             .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+    }
+
+    private static bool IsFinalStatus(string? status)
+    {
+        return string.Equals(status, "Approved", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(status, "Rejected", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsSubmittedForApproval(UarRequest request)
+    {
+        return string.Equals(request.SubmitForApproval, "Yes", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(request.Status, "Submitted for Approval", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private async Task SendWorkflowEmailsAsync(UarRequest previousRequest, UarRequest updatedRequest)
+    {
+        var wasSubmitted = IsSubmittedForApproval(previousRequest);
+        var isSubmitted = IsSubmittedForApproval(updatedRequest);
+        if (!wasSubmitted && isSubmitted)
+        {
+            await _emailService.SendApproverEmailAsync(updatedRequest);
+        }
+
+        var wasFinal = IsFinalStatus(previousRequest.Status);
+        var isFinal = IsFinalStatus(updatedRequest.Status);
+        if (!wasFinal && isFinal)
+        {
+            var approved = string.Equals(updatedRequest.Status, "Approved", StringComparison.OrdinalIgnoreCase);
+            await _emailService.SendSubmitterDecisionEmailAsync(updatedRequest, approved);
+
+            if (approved)
+            {
+                await _emailService.SendFulfillmentEmailAsync(updatedRequest);
+            }
+        }
     }
 }
