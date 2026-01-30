@@ -16,25 +16,25 @@ public class EmailService
         _logger = logger;
     }
 
-    public Task SendApproverEmailAsync(UarRequest request)
+    public async Task<EmailPreview?> SendApproverEmailAsync(UarRequest request)
     {
         var recipient = request.AuthorizedApprover;
         if (string.IsNullOrWhiteSpace(recipient))
         {
             _logger.LogWarning("Approver email missing for request {RequestNumber}.", request.RequestNumber);
-            return Task.CompletedTask;
+            return null;
         }
 
         if (!request.ApprovalToken.HasValue || request.ApprovalToken == Guid.Empty)
         {
             _logger.LogWarning("Approval token missing for request {RequestNumber}.", request.RequestNumber);
-            return Task.CompletedTask;
+            return null;
         }
 
         if (!request.RejectionToken.HasValue || request.RejectionToken == Guid.Empty)
         {
             _logger.LogWarning("Rejection token missing for request {RequestNumber}.", request.RequestNumber);
-            return Task.CompletedTask;
+            return null;
         }
 
         var approvalLink = BuildLink(_options.Urls.ApprovalBaseUrl, request.ApprovalToken.Value.ToString());
@@ -47,7 +47,13 @@ public class EmailService
                    $"Approve: {approvalLink}\n" +
                    (string.IsNullOrWhiteSpace(rejectionLink) ? string.Empty : $"Reject: {rejectionLink}\n");
 
-        return SendAsync(recipient, subject, body);
+        if (_options.DebugEmailPopup)
+        {
+            return new EmailPreview(subject, body, approvalLink, rejectionLink);
+        }
+
+        await SendAsync(recipient, subject, body);
+        return null;
     }
 
     public Task SendRdoApprovalRequestAsync(UarRequest request, string baseUrl)
@@ -245,6 +251,7 @@ public class EmailOptions
     public EmailFromOptions From { get; set; } = new();
     public EmailUrlOptions Urls { get; set; } = new();
     public string FulfillmentRecipient { get; set; } = string.Empty;
+    public bool DebugEmailPopup { get; set; }
 }
 
 public class EmailSmtpOptions
@@ -268,3 +275,5 @@ public class EmailUrlOptions
     public string RejectionBaseUrl { get; set; } = string.Empty;
     public string RequestDetailsBaseUrl { get; set; } = string.Empty;
 }
+
+public record EmailPreview(string Subject, string Body, string? ApprovalLink, string? RejectionLink);

@@ -71,7 +71,11 @@ public class EditModel : RequestFormPageModel
 
         await _requestService.UpdateAsync(RequestForm);
 
-        await SendWorkflowEmailsAsync(existingRequest, RequestForm);
+        var preview = await SendWorkflowEmailsAsync(existingRequest, RequestForm);
+        if (preview is not null)
+        {
+            StoreEmailPreview(preview);
+        }
         return RedirectToPage("/Requests/Details", new { id = RequestForm.Id });
     }
 
@@ -181,13 +185,14 @@ public class EditModel : RequestFormPageModel
             .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
     }
 
-    private async Task SendWorkflowEmailsAsync(UarRequest previousRequest, UarRequest updatedRequest)
+    private async Task<EmailPreview?> SendWorkflowEmailsAsync(UarRequest previousRequest, UarRequest updatedRequest)
     {
+        EmailPreview? preview = null;
         var wasSubmitted = ApprovalWorkflow.IsSubmittingForApproval(previousRequest);
         var isSubmitted = ApprovalWorkflow.IsSubmittingForApproval(updatedRequest);
         if (!wasSubmitted && isSubmitted)
         {
-            await _emailService.SendApproverEmailAsync(updatedRequest);
+            preview = await _emailService.SendApproverEmailAsync(updatedRequest);
         }
 
         var wasFinal = ApprovalWorkflow.IsFinalStatus(previousRequest.Status);
@@ -202,10 +207,20 @@ public class EditModel : RequestFormPageModel
                 await _emailService.SendFulfillmentEmailAsync(updatedRequest);
             }
         }
+
+        return preview;
     }
 
     public bool IsTerminalStatus(string? status)
     {
         return ApprovalWorkflow.IsFinalStatus(status);
+    }
+
+    private void StoreEmailPreview(EmailPreview preview)
+    {
+        TempData["DebugEmailSubject"] = preview.Subject;
+        TempData["DebugEmailBody"] = preview.Body;
+        TempData["DebugEmailApproveUrl"] = preview.ApprovalLink;
+        TempData["DebugEmailRejectUrl"] = preview.RejectionLink;
     }
 }

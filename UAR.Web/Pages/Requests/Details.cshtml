@@ -1,6 +1,38 @@
 @page "{id:int}"
 @model UAR.Web.Pages.Requests.DetailsModel
 
+@if (TempData["DebugEmailSubject"] is string debugSubject)
+{
+    <div class="modal fade show" id="debugEmailModal" tabindex="-1" style="display: block;" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Debug Approval Email</h5>
+                    <a class="btn-close" href="@Url.Page("/Requests/Details", new { id = Model.RequestDetails?.Id ?? 0 })" aria-label="Close"></a>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-1"><strong>Subject:</strong> @debugSubject</p>
+                    <pre class="bg-light p-3 rounded-3">@TempData["DebugEmailBody"]</pre>
+                    <div class="d-flex flex-wrap gap-2">
+                        @if (TempData["DebugEmailApproveUrl"] is string approveUrl && !string.IsNullOrWhiteSpace(approveUrl))
+                        {
+                            <a class="btn btn-success" href="@approveUrl">Approve</a>
+                        }
+                        @if (TempData["DebugEmailRejectUrl"] is string rejectUrl && !string.IsNullOrWhiteSpace(rejectUrl))
+                        {
+                            <a class="btn btn-danger" href="@rejectUrl">Reject</a>
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-outline-secondary" href="@Url.Page("/Requests/Details", new { id = Model.RequestDetails?.Id ?? 0 })">Close</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
 @if (Model.RequestDetails is null)
 {
     <div class="alert alert-warning">Request not found.</div>

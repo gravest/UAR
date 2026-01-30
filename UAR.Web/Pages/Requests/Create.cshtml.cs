@@ -97,17 +97,26 @@ public class CreateModel : PageModel
         var id = await _requestService.CreateAsync(RequestForm);
         RequestForm.Id = id;
 
+        EmailPreview? preview = null;
         if (ApprovalWorkflow.IsSubmittingForApproval(RequestForm))
         {
-            await _emailService.SendApproverEmailAsync(RequestForm);
+            preview = await _emailService.SendApproverEmailAsync(RequestForm);
         }
 
         var action = WorkflowAction?.Trim();
         if (string.Equals(action, "SubmitForApproval", StringComparison.OrdinalIgnoreCase))
         {
+            if (preview is not null)
+            {
+                StoreEmailPreview(preview);
+            }
             return RedirectToPage("/Requests/Index");
         }
 
+        if (preview is not null)
+        {
+            StoreEmailPreview(preview);
+        }
         return RedirectToPage("/Requests/Details", new { id });
     }
 
@@ -142,6 +151,14 @@ public class CreateModel : PageModel
         {
             RequestForm.DesiredEffectiveDate = DateTime.Today.AddDays(5).ToString("yyyy-MM-dd");
         }
+    }
+
+    private void StoreEmailPreview(EmailPreview preview)
+    {
+        TempData["DebugEmailSubject"] = preview.Subject;
+        TempData["DebugEmailBody"] = preview.Body;
+        TempData["DebugEmailApproveUrl"] = preview.ApprovalLink;
+        TempData["DebugEmailRejectUrl"] = preview.RejectionLink;
     }
 
     private async Task LoadOptionsAsync()
