@@ -7,6 +7,10 @@ namespace UAR.Web.Pages.Requests;
 
 public class CreateModel : PageModel
 {
+    private const string DraftStatus = "Saved As Draft";
+    private const string PendingApprovalStatus = "Pending Manager Approval";
+    private const string RejectedStatus = "Rejected";
+
     private readonly DropdownService _dropdownService;
     private readonly ProgramLookupService _programService;
     private readonly RequestService _requestService;
@@ -48,26 +52,20 @@ public class CreateModel : PageModel
     {
         await LoadOptionsAsync();
         SetDefaultDesiredEffectiveDate();
-        if (string.IsNullOrWhiteSpace(RequestForm.Status))
-        {
-            RequestForm.Status = "Saved As Draft";
-        }
+        RequestForm.Status = DraftStatus;
     }
 
     public async Task<IActionResult> OnPostAsync()
     {
         await LoadOptionsAsync();
+        ApplyWorkflowStatus();
+        ValidateStatusRequirements();
+        SetDefaultDesiredEffectiveDate();
 
         if (!ModelState.IsValid)
         {
             return Page();
         }
-
-        if (string.IsNullOrWhiteSpace(RequestForm.Status))
-        {
-            RequestForm.Status = "Saved As Draft";
-        }
-        SetDefaultDesiredEffectiveDate();
 
         RequestForm.RequestNumber = $"UAR-{DateTime.UtcNow:yyyyMMddHHmmss}";
         RequestForm.SubmittedOn = DateTime.UtcNow;
@@ -78,6 +76,44 @@ public class CreateModel : PageModel
 
         var id = await _requestService.CreateAsync(RequestForm);
         return RedirectToPage("/Requests/Details", new { id });
+    }
+
+    private void ApplyWorkflowStatus()
+    {
+        var submitRequested = IsSubmitRequested(RequestForm.SubmitForApproval);
+        var targetStatus = submitRequested ? PendingApprovalStatus : DraftStatus;
+
+        ModelState.Remove(nameof(RequestForm.Status));
+        ModelState.Remove(nameof(RequestForm.SubmitForApproval));
+
+        if (!string.IsNullOrWhiteSpace(RequestForm.Status)
+            && !string.Equals(RequestForm.Status, targetStatus, StringComparison.OrdinalIgnoreCase))
+        {
+            ModelState.AddModelError(nameof(RequestForm.Status),
+                "Draft requests can only move to pending approval when submitted.");
+        }
+
+        RequestForm.Status = targetStatus;
+        RequestForm.SubmitForApproval = null;
+    }
+
+    private void ValidateStatusRequirements()
+    {
+        if (IsRejectedStatus(RequestForm.Status) && string.IsNullOrWhiteSpace(RequestForm.RejectionReason))
+        {
+            ModelState.AddModelError(nameof(RequestForm.RejectionReason),
+                "Rejection reason is required when a request is rejected.");
+        }
+    }
+
+    private static bool IsSubmitRequested(string? submitValue)
+    {
+        return string.Equals(submitValue, "Yes", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsRejectedStatus(string? status)
+    {
+        return string.Equals(status, RejectedStatus, StringComparison.OrdinalIgnoreCase);
     }
 
     private void SetDefaultDesiredEffectiveDate()
