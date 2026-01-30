@@ -59,7 +59,14 @@
                     <td>@request.AuthorizedApprover</td>
                     <td class="text-end">
                         <a class="btn btn-sm btn-outline-primary" asp-page="/Requests/Details" asp-route-id="@request.Id">View</a>
-                        <a class="btn btn-sm btn-outline-secondary ms-2" asp-page="/Requests/Edit" asp-route-id="@request.Id">Edit</a>
+                        @if (string.Equals(request.Status, "Approved", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <button class="btn btn-sm btn-outline-secondary ms-2" disabled>Approved</button>
+                        }
+                        else
+                        {
+                            <a class="btn btn-sm btn-outline-secondary ms-2" asp-page="/Requests/Edit" asp-route-id="@request.Id">Edit</a>
+                        }
                     </td>
                 </tr>
             }
