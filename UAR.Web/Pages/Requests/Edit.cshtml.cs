@@ -12,6 +12,9 @@ public class EditModel : RequestFormPageModel
     private readonly RequestService _requestService;
     private readonly EmailService _emailService;
 
+    [BindProperty]
+    public string? WorkflowAction { get; set; }
+
     public EditModel(
         DropdownService dropdownService,
         ProgramLookupService programService,
@@ -74,7 +77,7 @@ public class EditModel : RequestFormPageModel
 
     private void ApplyWorkflowStatus(string? currentStatus)
     {
-        var submitRequested = IsSubmitRequested(RequestForm.SubmitForApproval);
+        var action = WorkflowAction?.Trim();
         var normalizedCurrentStatus = string.IsNullOrWhiteSpace(currentStatus)
             ? ApprovalWorkflow.DraftStatus
             : currentStatus;
@@ -84,7 +87,7 @@ public class EditModel : RequestFormPageModel
 
         if (ApprovalWorkflow.IsDraftStatus(normalizedCurrentStatus))
         {
-            var targetStatus = submitRequested
+            var targetStatus = string.Equals(action, "SubmitForApproval", StringComparison.OrdinalIgnoreCase)
                 ? ApprovalWorkflow.PendingManagerApprovalStatus
                 : ApprovalWorkflow.DraftStatus;
 
@@ -96,19 +99,19 @@ public class EditModel : RequestFormPageModel
             }
 
             RequestForm.Status = targetStatus;
-            RequestForm.SubmitForApproval = null;
+            RequestForm.SubmitForApproval = string.Equals(action, "SubmitForApproval", StringComparison.OrdinalIgnoreCase)
+                ? "Yes"
+                : null;
             return;
         }
 
-        if (submitRequested)
+        if (string.Equals(action, "SubmitForApproval", StringComparison.OrdinalIgnoreCase))
         {
             ModelState.AddModelError(nameof(RequestForm.SubmitForApproval),
                 "Only draft requests can be submitted for approval.");
         }
 
-        var requestedStatus = string.IsNullOrWhiteSpace(RequestForm.Status)
-            ? normalizedCurrentStatus
-            : RequestForm.Status;
+        var requestedStatus = ResolveWorkflowStatus(action, normalizedCurrentStatus);
 
         if (ApprovalWorkflow.IsDraftStatus(requestedStatus))
         {
@@ -138,11 +141,25 @@ public class EditModel : RequestFormPageModel
         }
     }
 
-    private static bool IsSubmitRequested(string? submitValue)
+    private static string ResolveWorkflowStatus(string? action, string currentStatus)
     {
-        return string.Equals(submitValue, "Yes", StringComparison.OrdinalIgnoreCase);
-    }
+        if (string.Equals(action, "Approve", StringComparison.OrdinalIgnoreCase))
+        {
+            return ApprovalWorkflow.ApprovedStatus;
+        }
 
+        if (string.Equals(action, "Reject", StringComparison.OrdinalIgnoreCase))
+        {
+            return ApprovalWorkflow.RejectedStatus;
+        }
+
+        if (string.Equals(action, "SavePending", StringComparison.OrdinalIgnoreCase))
+        {
+            return currentStatus;
+        }
+
+        return currentStatus;
+    }
 
     private async Task LoadOptionsAsync()
     {

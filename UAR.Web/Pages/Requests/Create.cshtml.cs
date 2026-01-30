@@ -39,6 +39,9 @@ public class CreateModel : PageModel
     [BindProperty]
     public string[] SelectedAdditionalLawsonAccess { get; set; } = Array.Empty<string>();
 
+    [BindProperty]
+    public string? WorkflowAction { get; set; }
+
     public IReadOnlyList<DropdownOption> Companies { get; private set; } = Array.Empty<DropdownOption>();
     public IReadOnlyList<DropdownOption> EmployeeStatuses { get; private set; } = Array.Empty<DropdownOption>();
     public IReadOnlyList<DropdownOption> EmployeeTypes { get; private set; } = Array.Empty<DropdownOption>();
@@ -104,7 +107,8 @@ public class CreateModel : PageModel
 
     private void ApplyWorkflowStatus()
     {
-        var submitRequested = IsSubmitRequested(RequestForm.SubmitForApproval);
+        var action = WorkflowAction?.Trim();
+        var submitRequested = string.Equals(action, "SubmitForApproval", StringComparison.OrdinalIgnoreCase);
         var targetStatus = submitRequested
             ? ApprovalWorkflow.PendingManagerApprovalStatus
             : ApprovalWorkflow.DraftStatus;
@@ -120,7 +124,7 @@ public class CreateModel : PageModel
         }
 
         RequestForm.Status = targetStatus;
-        RequestForm.SubmitForApproval = null;
+        RequestForm.SubmitForApproval = submitRequested ? "Yes" : null;
     }
 
     private void ValidateStatusRequirements()
@@ -131,11 +135,6 @@ public class CreateModel : PageModel
             ModelState.AddModelError(nameof(RequestForm.RejectionReason),
                 "Rejection reason is required when a request is rejected.");
         }
-    }
-
-    private static bool IsSubmitRequested(string? submitValue)
-    {
-        return string.Equals(submitValue, "Yes", StringComparison.OrdinalIgnoreCase);
     }
 
     private void SetDefaultDesiredEffectiveDate()
