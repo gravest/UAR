@@ -7,21 +7,26 @@ namespace UAR.Web.Pages.Requests;
 
 public class EditModel : RequestFormPageModel
 {
-    private static readonly HashSet<string> TerminalStatuses = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "Rejected",
-        "Approved",
-        "Completed"
-    };
+    private const string DraftStatus = "Saved As Draft";
+    private const string PendingApprovalStatus = "Pending Manager Approval";
+    private const string ApprovedStatus = "Approved";
+    private const string RejectedStatus = "Rejected";
+
     private readonly DropdownService _dropdownService;
     private readonly ProgramLookupService _programService;
     private readonly RequestService _requestService;
+    private readonly EmailService _emailService;
 
-    public EditModel(DropdownService dropdownService, ProgramLookupService programService, RequestService requestService)
+    public EditModel(
+        DropdownService dropdownService,
+        ProgramLookupService programService,
+        RequestService requestService,
+        EmailService emailService)
     {
         _dropdownService = dropdownService;
         _programService = programService;
         _requestService = requestService;
+        _emailService = emailService;
     }
 
 
@@ -53,29 +58,111 @@ public class EditModel : RequestFormPageModel
             return NotFound();
         }
 
-        if (IsTerminalStatus(existingRequest.Status))
-        {
-            ModelState.AddModelError(string.Empty, $"This request is {existingRequest.Status} and can no longer be updated.");
-            return Page();
-        }
-
-        if (!ModelState.IsValid)
-        {
-            return Page();
-        }
+        ApplyWorkflowStatus(existingRequest.Status);
+        ValidateStatusRequirements();
 
         RequestForm.EmployeeDeviceTypes = string.Join(", ", SelectedEmployeeDeviceTypes);
         RequestForm.AdditionalMicrosoftProducts = string.Join(", ", SelectedAdditionalMicrosoftProducts);
         RequestForm.KronosAccessTypes = string.Join(", ", SelectedKronosAccessTypes);
         RequestForm.AdditionalLawsonAccess = string.Join(", ", SelectedAdditionalLawsonAccess);
 
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
+
         await _requestService.UpdateAsync(RequestForm);
+
+        await SendWorkflowEmailsAsync(existingRequest, RequestForm);
         return RedirectToPage("/Requests/Details", new { id = RequestForm.Id });
     }
 
-    public bool IsTerminalStatus(string? status)
+    private void ApplyWorkflowStatus(string? currentStatus)
     {
-        return !string.IsNullOrWhiteSpace(status) && TerminalStatuses.Contains(status);
+        var submitRequested = IsSubmitRequested(RequestForm.SubmitForApproval);
+        var normalizedCurrentStatus = string.IsNullOrWhiteSpace(currentStatus) ? DraftStatus : currentStatus;
+
+        ModelState.Remove(nameof(RequestForm.Status));
+        ModelState.Remove(nameof(RequestForm.SubmitForApproval));
+
+        if (IsDraftStatus(normalizedCurrentStatus))
+        {
+            var targetStatus = submitRequested ? PendingApprovalStatus : DraftStatus;
+
+            if (!string.IsNullOrWhiteSpace(RequestForm.Status)
+                && !string.Equals(RequestForm.Status, targetStatus, StringComparison.OrdinalIgnoreCase))
+            {
+                ModelState.AddModelError(nameof(RequestForm.Status),
+                    "Draft requests can only move to pending approval when submitted.");
+            }
+
+            RequestForm.Status = targetStatus;
+            RequestForm.SubmitForApproval = null;
+            return;
+        }
+
+        if (submitRequested)
+        {
+            ModelState.AddModelError(nameof(RequestForm.SubmitForApproval),
+                "Only draft requests can be submitted for approval.");
+        }
+
+        var requestedStatus = string.IsNullOrWhiteSpace(RequestForm.Status)
+            ? normalizedCurrentStatus
+            : RequestForm.Status;
+
+        if (IsDraftStatus(requestedStatus))
+        {
+            ModelState.AddModelError(nameof(RequestForm.Status),
+                "Requests cannot be moved back to Draft.");
+        }
+
+        if ((IsApprovedStatus(requestedStatus) || IsRejectedStatus(requestedStatus))
+            && !IsPendingApprovalStatus(normalizedCurrentStatus))
+        {
+            ModelState.AddModelError(nameof(RequestForm.Status),
+                "Only pending requests can be approved or rejected.");
+        }
+
+        RequestForm.Status = requestedStatus;
+        RequestForm.SubmitForApproval = null;
+    }
+
+    private void ValidateStatusRequirements()
+    {
+        if (IsRejectedStatus(RequestForm.Status) && string.IsNullOrWhiteSpace(RequestForm.RejectionReason))
+        {
+            ModelState.AddModelError(nameof(RequestForm.RejectionReason),
+                "Rejection reason is required when a request is rejected.");
+        }
+    }
+
+    private static bool IsSubmitRequested(string? submitValue)
+    {
+        return string.Equals(submitValue, "Yes", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsDraftStatus(string? status)
+    {
+        return string.Equals(status, DraftStatus, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(status, "Draft", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsPendingApprovalStatus(string? status)
+    {
+        return string.Equals(status, PendingApprovalStatus, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(status, "Pending Approval", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(status, "Submit for Approval", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsApprovedStatus(string? status)
+    {
+        return string.Equals(status, ApprovedStatus, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsRejectedStatus(string? status)
+    {
+        return string.Equals(status, RejectedStatus, StringComparison.OrdinalIgnoreCase);
     }
 
     private async Task LoadOptionsAsync()
@@ -96,5 +183,40 @@ public class EditModel : RequestFormPageModel
     {
         return values
             .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+    }
+
+    private static bool IsFinalStatus(string? status)
+    {
+        return string.Equals(status, "Approved", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(status, "Rejected", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsSubmittedForApproval(UarRequest request)
+    {
+        return string.Equals(request.SubmitForApproval, "Yes", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(request.Status, "Submitted for Approval", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private async Task SendWorkflowEmailsAsync(UarRequest previousRequest, UarRequest updatedRequest)
+    {
+        var wasSubmitted = IsSubmittedForApproval(previousRequest);
+        var isSubmitted = IsSubmittedForApproval(updatedRequest);
+        if (!wasSubmitted && isSubmitted)
+        {
+            await _emailService.SendApproverEmailAsync(updatedRequest);
+        }
+
+        var wasFinal = IsFinalStatus(previousRequest.Status);
+        var isFinal = IsFinalStatus(updatedRequest.Status);
+        if (!wasFinal && isFinal)
+        {
+            var approved = string.Equals(updatedRequest.Status, "Approved", StringComparison.OrdinalIgnoreCase);
+            await _emailService.SendSubmitterDecisionEmailAsync(updatedRequest, approved);
+
+            if (approved)
+            {
+                await _emailService.SendFulfillmentEmailAsync(updatedRequest);
+            }
+        }
     }
 }
