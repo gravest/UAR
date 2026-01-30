@@ -68,6 +68,18 @@ public class CreateModel : PageModel
         ValidateStatusRequirements();
         SetDefaultDesiredEffectiveDate();
 
+        RequestForm.EmployeeDeviceTypes = string.Join(", ", SelectedEmployeeDeviceTypes);
+        RequestForm.AdditionalMicrosoftProducts = string.Join(", ", SelectedAdditionalMicrosoftProducts);
+        RequestForm.KronosAccessTypes = string.Join(", ", SelectedKronosAccessTypes);
+        RequestForm.AdditionalLawsonAccess = string.Join(", ", SelectedAdditionalLawsonAccess);
+
+        if (ApprovalWorkflow.IsSubmittingForApproval(RequestForm)
+            && RdoApprovalEvaluator.RequiresRdoApproval(RequestForm)
+            && string.IsNullOrWhiteSpace(RequestForm.RdoApprover))
+        {
+            ModelState.AddModelError("RequestForm.RdoApprover", "RDO Approver is required when RDO approval is needed.");
+        }
+
         if (!ModelState.IsValid)
         {
             return Page();
