@@ -186,4 +186,9 @@ public class EditModel : RequestFormPageModel
             }
         }
     }
+
+    public bool IsTerminalStatus(string? status)
+    {
+        return ApprovalWorkflow.IsFinalStatus(status);
+    }
 }
