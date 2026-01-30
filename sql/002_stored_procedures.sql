@@ -221,6 +221,13 @@ CREATE OR ALTER PROCEDURE dbo.UarRequest_Create
     @CopilotLicense NVARCHAR(20),
     @SmartsheetLicense NVARCHAR(20),
     @EFax NVARCHAR(20),
+    @ApprovalToken UNIQUEIDENTIFIER,
+    @RejectionToken UNIQUEIDENTIFIER,
+    @ApprovalDecision NVARCHAR(50),
+    @ApprovedOn DATETIME2,
+    @ApprovedBy NVARCHAR(200),
+    @RejectedOn DATETIME2,
+    @RejectedBy NVARCHAR(200),
     @Id INT OUTPUT
 AS
 BEGIN
@@ -240,7 +247,8 @@ BEGIN
         AdverseEventSupervisorAccess, AdverseEventAdditionalProgramAccess, BusinessIntelligenceRole,
         AdverseEventNonEmployeeAccess, TelehealthAccess, NextTelehealthSession, AdditionalComments,
         PharmericaAccess, PharmericaUserRole, PharmericaUsername, CallCenterAccess, AdobeSignAccount,
-        CopilotLicense, SmartsheetLicense, EFax
+        CopilotLicense, SmartsheetLicense, EFax, ApprovalToken, RejectionToken, ApprovalDecision,
+        ApprovedOn, ApprovedBy, RejectedOn, RejectedBy
     )
     VALUES (
         @RequestNumber, @SubmittedOn, @EmployeeNameChange, @Company, @EmployeeFirstName, @EmployeeMiddleName,
@@ -257,7 +265,8 @@ BEGIN
         @AdverseEventSupervisorAccess, @AdverseEventAdditionalProgramAccess, @BusinessIntelligenceRole,
         @AdverseEventNonEmployeeAccess, @TelehealthAccess, @NextTelehealthSession, @AdditionalComments,
         @PharmericaAccess, @PharmericaUserRole, @PharmericaUsername, @CallCenterAccess, @AdobeSignAccount,
-        @CopilotLicense, @SmartsheetLicense, @EFax
+        @CopilotLicense, @SmartsheetLicense, @EFax, @ApprovalToken, @RejectionToken, @ApprovalDecision,
+        @ApprovedOn, @ApprovedBy, @RejectedOn, @RejectedBy
     );
     SET @Id = SCOPE_IDENTITY();
 END
@@ -281,7 +290,8 @@ BEGIN
            AdverseEventSupervisorAccess, AdverseEventAdditionalProgramAccess, BusinessIntelligenceRole,
            AdverseEventNonEmployeeAccess, TelehealthAccess, NextTelehealthSession, AdditionalComments,
            PharmericaAccess, PharmericaUserRole, PharmericaUsername, CallCenterAccess, AdobeSignAccount,
-           CopilotLicense, SmartsheetLicense, EFax
+           CopilotLicense, SmartsheetLicense, EFax, ApprovalToken, RejectionToken, ApprovalDecision,
+           ApprovedOn, ApprovedBy, RejectedOn, RejectedBy
     FROM dbo.UarRequests
     ORDER BY SubmittedOn DESC;
 END
@@ -306,7 +316,8 @@ BEGIN
            AdverseEventSupervisorAccess, AdverseEventAdditionalProgramAccess, BusinessIntelligenceRole,
            AdverseEventNonEmployeeAccess, TelehealthAccess, NextTelehealthSession, AdditionalComments,
            PharmericaAccess, PharmericaUserRole, PharmericaUsername, CallCenterAccess, AdobeSignAccount,
-           CopilotLicense, SmartsheetLicense, EFax
+           CopilotLicense, SmartsheetLicense, EFax, ApprovalToken, RejectionToken, ApprovalDecision,
+           ApprovedOn, ApprovedBy, RejectedOn, RejectedBy
     FROM dbo.UarRequests
     WHERE Id = @Id;
 END
@@ -382,7 +393,14 @@ CREATE OR ALTER PROCEDURE dbo.UarRequest_Update
     @AdobeSignAccount NVARCHAR(20),
     @CopilotLicense NVARCHAR(20),
     @SmartsheetLicense NVARCHAR(20),
-    @EFax NVARCHAR(20)
+    @EFax NVARCHAR(20),
+    @ApprovalToken UNIQUEIDENTIFIER,
+    @RejectionToken UNIQUEIDENTIFIER,
+    @ApprovalDecision NVARCHAR(50),
+    @ApprovedOn DATETIME2,
+    @ApprovedBy NVARCHAR(200),
+    @RejectedOn DATETIME2,
+    @RejectedBy NVARCHAR(200)
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -455,8 +473,104 @@ BEGIN
         AdobeSignAccount = @AdobeSignAccount,
         CopilotLicense = @CopilotLicense,
         SmartsheetLicense = @SmartsheetLicense,
-        EFax = @EFax
+        EFax = @EFax,
+        ApprovalToken = @ApprovalToken,
+        RejectionToken = @RejectionToken,
+        ApprovalDecision = @ApprovalDecision,
+        ApprovedOn = @ApprovedOn,
+        ApprovedBy = @ApprovedBy,
+        RejectedOn = @RejectedOn,
+        RejectedBy = @RejectedBy
     WHERE Id = @Id;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.UarRequest_GetByApprovalToken
+    @ApprovalToken UNIQUEIDENTIFIER
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT Id, RequestNumber, SubmittedOn, EmployeeNameChange, Company, EmployeeFirstName, EmployeeMiddleName,
+           EmployeeLastName, JobTitle, DesiredEffectiveDate, RequestorPhoneNumber, EmployeeStatus,
+           EmployeeType, TransferFromProgram, LeaveOfAbsence, RegionName, Program1, Program2, Program3,
+           OtherPrograms, EmployeeDeviceTypes, OtherDeviceType, HrRepresentativeName, SubmitForApproval,
+           Status, AuthorizedApprover, ProgramAdministrator, RdoApprover, RejectionReason, EmailAccount,
+           AccountEnableDisable, ForwardingEmailAddress, AssignedAccountUsername, Office365License,
+           AdditionalMicrosoftProducts, CreateEmailGroups, SharePointSiteUrl, SharePointSiteDescription,
+           ExistingEmailGroups, AdditionalSharepointAccess, NetworkSharedDrives, TopAccess,
+           KronosAccessTypes, KronosAccessDetails, LawsonAccess, AdditionalLawsonAccess, MileageAccess,
+           ComericaBankingAccess, TrustRepPayeeAccess, QuickbooksAccess, CoWorkerAccess,
+           AdditionalHrFinanceAccess, OrderConnectAccess, CaminarAccess, AvatarAccess,
+           AdverseEventSupervisorAccess, AdverseEventAdditionalProgramAccess, BusinessIntelligenceRole,
+           AdverseEventNonEmployeeAccess, TelehealthAccess, NextTelehealthSession, AdditionalComments,
+           PharmericaAccess, PharmericaUserRole, PharmericaUsername, CallCenterAccess, AdobeSignAccount,
+           CopilotLicense, SmartsheetLicense, EFax, ApprovalToken, RejectionToken, ApprovalDecision,
+           ApprovedOn, ApprovedBy, RejectedOn, RejectedBy
+    FROM dbo.UarRequests
+    WHERE ApprovalToken = @ApprovalToken;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.UarRequest_GetByRejectionToken
+    @RejectionToken UNIQUEIDENTIFIER
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT Id, RequestNumber, SubmittedOn, EmployeeNameChange, Company, EmployeeFirstName, EmployeeMiddleName,
+           EmployeeLastName, JobTitle, DesiredEffectiveDate, RequestorPhoneNumber, EmployeeStatus,
+           EmployeeType, TransferFromProgram, LeaveOfAbsence, RegionName, Program1, Program2, Program3,
+           OtherPrograms, EmployeeDeviceTypes, OtherDeviceType, HrRepresentativeName, SubmitForApproval,
+           Status, AuthorizedApprover, ProgramAdministrator, RdoApprover, RejectionReason, EmailAccount,
+           AccountEnableDisable, ForwardingEmailAddress, AssignedAccountUsername, Office365License,
+           AdditionalMicrosoftProducts, CreateEmailGroups, SharePointSiteUrl, SharePointSiteDescription,
+           ExistingEmailGroups, AdditionalSharepointAccess, NetworkSharedDrives, TopAccess,
+           KronosAccessTypes, KronosAccessDetails, LawsonAccess, AdditionalLawsonAccess, MileageAccess,
+           ComericaBankingAccess, TrustRepPayeeAccess, QuickbooksAccess, CoWorkerAccess,
+           AdditionalHrFinanceAccess, OrderConnectAccess, CaminarAccess, AvatarAccess,
+           AdverseEventSupervisorAccess, AdverseEventAdditionalProgramAccess, BusinessIntelligenceRole,
+           AdverseEventNonEmployeeAccess, TelehealthAccess, NextTelehealthSession, AdditionalComments,
+           PharmericaAccess, PharmericaUserRole, PharmericaUsername, CallCenterAccess, AdobeSignAccount,
+           CopilotLicense, SmartsheetLicense, EFax, ApprovalToken, RejectionToken, ApprovalDecision,
+           ApprovedOn, ApprovedBy, RejectedOn, RejectedBy
+    FROM dbo.UarRequests
+    WHERE RejectionToken = @RejectionToken;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.UarRequest_ApproveByToken
+    @ApprovalToken UNIQUEIDENTIFIER,
+    @ApprovedBy NVARCHAR(200),
+    @ApprovedOn DATETIME2
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE dbo.UarRequests
+    SET Status = 'Approved',
+        ApprovalDecision = 'Approved',
+        ApprovedBy = @ApprovedBy,
+        ApprovedOn = @ApprovedOn,
+        RejectedOn = NULL,
+        RejectedBy = NULL,
+        RejectionReason = NULL
+    WHERE ApprovalToken = @ApprovalToken;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.UarRequest_RejectByToken
+    @RejectionToken UNIQUEIDENTIFIER,
+    @RejectedBy NVARCHAR(200),
+    @RejectedOn DATETIME2,
+    @RejectionReason NVARCHAR(MAX)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE dbo.UarRequests
+    SET Status = 'Rejected',
+        ApprovalDecision = 'Rejected',
+        RejectedBy = @RejectedBy,
+        RejectedOn = @RejectedOn,
+        RejectionReason = @RejectionReason
+    WHERE RejectionToken = @RejectionToken;
 END
 GO
 

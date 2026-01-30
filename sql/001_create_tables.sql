@@ -98,5 +98,12 @@ CREATE TABLE dbo.UarRequests (
     AdobeSignAccount NVARCHAR(20) NULL,
     CopilotLicense NVARCHAR(20) NULL,
     SmartsheetLicense NVARCHAR(20) NULL,
-    EFax NVARCHAR(20) NULL
+    EFax NVARCHAR(20) NULL,
+    ApprovalToken UNIQUEIDENTIFIER NULL,
+    RejectionToken UNIQUEIDENTIFIER NULL,
+    ApprovalDecision NVARCHAR(50) NULL,
+    ApprovedOn DATETIME2 NULL,
+    ApprovedBy NVARCHAR(200) NULL,
+    RejectedOn DATETIME2 NULL,
+    RejectedBy NVARCHAR(200) NULL
 );
