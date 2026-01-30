@@ -44,8 +44,8 @@ else
         </dl>
     </div>
 
-    <div class="section-card p-3">
-        <h5 class="mb-3">Request Details</h5>
+    <div class="section-card p-3 mb-3">
+        <h5 class="mb-3">General Request Info</h5>
         <div class="row g-3">
             <div class="col-md-6">
                 <label class="form-label">Company</label>
@@ -54,6 +54,10 @@ else
             <div class="col-md-6">
                 <label class="form-label">Request Number</label>
                 <div class="form-control-static">@Model.RequestDetails.RequestNumber</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Employee Name Change</label>
+                <div class="form-control-static">@Model.RequestDetails.EmployeeNameChange</div>
             </div>
             <div class="col-md-4">
                 <label class="form-label">Employee First Name</label>
@@ -127,6 +131,16 @@ else
                 <label class="form-label">HR Representative Name</label>
                 <div class="form-control-static">@Model.RequestDetails.HrRepresentativeName</div>
             </div>
+        </div>
+    </div>
+
+    <div class="section-card p-3 mb-3">
+        <h5 class="mb-3">Status &amp; Approval</h5>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Status</label>
+                <div class="form-control-static">@Model.RequestDetails.Status</div>
+            </div>
             <div class="col-md-6">
                 <label class="form-label">Authorized Approver</label>
                 <div class="form-control-static">@Model.RequestDetails.AuthorizedApprover</div>
@@ -143,6 +157,32 @@ else
                 <label class="form-label">Rejection Reason</label>
                 <div class="form-control-static">@Model.RequestDetails.RejectionReason</div>
             </div>
+            <div class="col-md-6">
+                <label class="form-label">Approval Decision</label>
+                <div class="form-control-static">@Model.RequestDetails.ApprovalDecision</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Approved On</label>
+                <div class="form-control-static">@Model.RequestDetails.ApprovedOn?.ToLocalTime().ToString("g")</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Approved By</label>
+                <div class="form-control-static">@Model.RequestDetails.ApprovedBy</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Rejected On</label>
+                <div class="form-control-static">@Model.RequestDetails.RejectedOn?.ToLocalTime().ToString("g")</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Rejected By</label>
+                <div class="form-control-static">@Model.RequestDetails.RejectedBy</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-card p-3 mb-3">
+        <h5 class="mb-3">Email / Network Access</h5>
+        <div class="row g-3">
 
             <div class="col-md-6">
                 <label class="form-label">Email Account</label>
@@ -192,6 +232,12 @@ else
                 <label class="form-label">Network Shared Drives</label>
                 <div class="form-control-static">@Model.RequestDetails.NetworkSharedDrives</div>
             </div>
+        </div>
+    </div>
+
+    <div class="section-card p-3 mb-3">
+        <h5 class="mb-3">HR / Finance / Operations Access</h5>
+        <div class="row g-3">
             <div class="col-md-6">
                 <label class="form-label">TOP Access</label>
                 <div class="form-control-static">@Model.RequestDetails.TopAccess</div>
@@ -240,6 +286,12 @@ else
                 <label class="form-label">OrderConnect Access</label>
                 <div class="form-control-static">@Model.RequestDetails.OrderConnectAccess</div>
             </div>
+        </div>
+    </div>
+
+    <div class="section-card p-3 mb-3">
+        <h5 class="mb-3">Program / Clinical Systems</h5>
+        <div class="row g-3">
             <div class="col-md-6">
                 <label class="form-label">Caminar Access</label>
                 <div class="form-control-static">@Model.RequestDetails.CaminarAccess</div>
@@ -272,10 +324,12 @@ else
                 <label class="form-label">Next Telehealth Session</label>
                 <div class="form-control-static">@Model.RequestDetails.NextTelehealthSession</div>
             </div>
-            <div class="col-md-12">
-                <label class="form-label">Additional Comments</label>
-                <div class="form-control-static">@Model.RequestDetails.AdditionalComments</div>
-            </div>
+        </div>
+    </div>
+
+    <div class="section-card p-3 mb-3">
+        <h5 class="mb-3">Pharmerica / Call Center / Adobe</h5>
+        <div class="row g-3">
             <div class="col-md-6">
                 <label class="form-label">Pharmerica Access</label>
                 <div class="form-control-static">@Model.RequestDetails.PharmericaAccess</div>
@@ -296,6 +350,12 @@ else
                 <label class="form-label">Adobe Sign Account</label>
                 <div class="form-control-static">@Model.RequestDetails.AdobeSignAccount</div>
             </div>
+        </div>
+    </div>
+
+    <div class="section-card p-3 mb-3">
+        <h5 class="mb-3">Licensing &amp; Other</h5>
+        <div class="row g-3">
             <div class="col-md-6">
                 <label class="form-label">Copilot License</label>
                 <div class="form-control-static">@Model.RequestDetails.CopilotLicense</div>
@@ -307,6 +367,10 @@ else
             <div class="col-md-6">
                 <label class="form-label">E-Fax</label>
                 <div class="form-control-static">@Model.RequestDetails.EFax</div>
+            </div>
+            <div class="col-md-12">
+                <label class="form-label">Additional Comments</label>
+                <div class="form-control-static">@Model.RequestDetails.AdditionalComments</div>
             </div>
         </div>
     </div>
