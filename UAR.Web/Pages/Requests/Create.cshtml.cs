@@ -69,6 +69,9 @@ public class CreateModel : PageModel
 
         RequestForm.RequestNumber = $"UAR-{DateTime.UtcNow:yyyyMMddHHmmss}";
         RequestForm.SubmittedOn = DateTime.UtcNow;
+        RequestForm.ApprovalToken = Guid.NewGuid();
+        RequestForm.RejectionToken = Guid.NewGuid();
+        RequestForm.ApprovalDecision = "Pending";
         RequestForm.EmployeeDeviceTypes = string.Join(", ", SelectedEmployeeDeviceTypes);
         RequestForm.AdditionalMicrosoftProducts = string.Join(", ", SelectedAdditionalMicrosoftProducts);
         RequestForm.KronosAccessTypes = string.Join(", ", SelectedKronosAccessTypes);
