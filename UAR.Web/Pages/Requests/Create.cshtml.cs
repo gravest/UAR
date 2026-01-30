@@ -102,6 +102,12 @@ public class CreateModel : PageModel
             await _emailService.SendApproverEmailAsync(RequestForm);
         }
 
+        var action = WorkflowAction?.Trim();
+        if (string.Equals(action, "SubmitForApproval", StringComparison.OrdinalIgnoreCase))
+        {
+            return RedirectToPage("/Requests/Index");
+        }
+
         return RedirectToPage("/Requests/Details", new { id });
     }
 
@@ -115,13 +121,6 @@ public class CreateModel : PageModel
 
         ModelState.Remove(nameof(RequestForm.Status));
         ModelState.Remove(nameof(RequestForm.SubmitForApproval));
-
-        if (!string.IsNullOrWhiteSpace(RequestForm.Status)
-            && !string.Equals(RequestForm.Status, targetStatus, StringComparison.OrdinalIgnoreCase))
-        {
-            ModelState.AddModelError(nameof(RequestForm.Status),
-                "Draft requests can only move to pending approval when submitted.");
-        }
 
         RequestForm.Status = targetStatus;
         RequestForm.SubmitForApproval = submitRequested ? "Yes" : null;
