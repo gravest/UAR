@@ -7,10 +7,6 @@ namespace UAR.Web.Pages.Requests;
 
 public class CreateModel : PageModel
 {
-    private const string DraftStatus = "Saved As Draft";
-    private const string PendingApprovalStatus = "Pending Manager Approval";
-    private const string RejectedStatus = "Rejected";
-
     private readonly DropdownService _dropdownService;
     private readonly ProgramLookupService _programService;
     private readonly RequestService _requestService;
@@ -58,7 +54,7 @@ public class CreateModel : PageModel
     {
         await LoadOptionsAsync();
         SetDefaultDesiredEffectiveDate();
-        RequestForm.Status = DraftStatus;
+        RequestForm.Status = ApprovalWorkflow.DraftStatus;
     }
 
     public async Task<IActionResult> OnPostAsync()
@@ -98,7 +94,7 @@ public class CreateModel : PageModel
         var id = await _requestService.CreateAsync(RequestForm);
         RequestForm.Id = id;
 
-        if (IsSubmittedForApproval(RequestForm))
+        if (ApprovalWorkflow.IsSubmittingForApproval(RequestForm))
         {
             await _emailService.SendApproverEmailAsync(RequestForm);
         }
@@ -109,7 +105,9 @@ public class CreateModel : PageModel
     private void ApplyWorkflowStatus()
     {
         var submitRequested = IsSubmitRequested(RequestForm.SubmitForApproval);
-        var targetStatus = submitRequested ? PendingApprovalStatus : DraftStatus;
+        var targetStatus = submitRequested
+            ? ApprovalWorkflow.PendingManagerApprovalStatus
+            : ApprovalWorkflow.DraftStatus;
 
         ModelState.Remove(nameof(RequestForm.Status));
         ModelState.Remove(nameof(RequestForm.SubmitForApproval));
@@ -127,7 +125,8 @@ public class CreateModel : PageModel
 
     private void ValidateStatusRequirements()
     {
-        if (IsRejectedStatus(RequestForm.Status) && string.IsNullOrWhiteSpace(RequestForm.RejectionReason))
+        if (ApprovalWorkflow.IsRejectedStatus(RequestForm.Status)
+            && string.IsNullOrWhiteSpace(RequestForm.RejectionReason))
         {
             ModelState.AddModelError(nameof(RequestForm.RejectionReason),
                 "Rejection reason is required when a request is rejected.");
@@ -137,11 +136,6 @@ public class CreateModel : PageModel
     private static bool IsSubmitRequested(string? submitValue)
     {
         return string.Equals(submitValue, "Yes", StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static bool IsRejectedStatus(string? status)
-    {
-        return string.Equals(status, RejectedStatus, StringComparison.OrdinalIgnoreCase);
     }
 
     private void SetDefaultDesiredEffectiveDate()
@@ -166,9 +160,4 @@ public class CreateModel : PageModel
         Programs = await _programService.GetAllAsync();
     }
 
-    private static bool IsSubmittedForApproval(UarRequest request)
-    {
-        return string.Equals(request.SubmitForApproval, "Yes", StringComparison.OrdinalIgnoreCase)
-            || string.Equals(request.Status, "Submitted for Approval", StringComparison.OrdinalIgnoreCase);
-    }
 }

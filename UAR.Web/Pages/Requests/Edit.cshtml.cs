@@ -7,11 +7,6 @@ namespace UAR.Web.Pages.Requests;
 
 public class EditModel : RequestFormPageModel
 {
-    private const string DraftStatus = "Saved As Draft";
-    private const string PendingApprovalStatus = "Pending Manager Approval";
-    private const string ApprovedStatus = "Approved";
-    private const string RejectedStatus = "Rejected";
-
     private readonly DropdownService _dropdownService;
     private readonly ProgramLookupService _programService;
     private readonly RequestService _requestService;
@@ -80,14 +75,18 @@ public class EditModel : RequestFormPageModel
     private void ApplyWorkflowStatus(string? currentStatus)
     {
         var submitRequested = IsSubmitRequested(RequestForm.SubmitForApproval);
-        var normalizedCurrentStatus = string.IsNullOrWhiteSpace(currentStatus) ? DraftStatus : currentStatus;
+        var normalizedCurrentStatus = string.IsNullOrWhiteSpace(currentStatus)
+            ? ApprovalWorkflow.DraftStatus
+            : currentStatus;
 
         ModelState.Remove(nameof(RequestForm.Status));
         ModelState.Remove(nameof(RequestForm.SubmitForApproval));
 
-        if (IsDraftStatus(normalizedCurrentStatus))
+        if (ApprovalWorkflow.IsDraftStatus(normalizedCurrentStatus))
         {
-            var targetStatus = submitRequested ? PendingApprovalStatus : DraftStatus;
+            var targetStatus = submitRequested
+                ? ApprovalWorkflow.PendingManagerApprovalStatus
+                : ApprovalWorkflow.DraftStatus;
 
             if (!string.IsNullOrWhiteSpace(RequestForm.Status)
                 && !string.Equals(RequestForm.Status, targetStatus, StringComparison.OrdinalIgnoreCase))
@@ -111,14 +110,15 @@ public class EditModel : RequestFormPageModel
             ? normalizedCurrentStatus
             : RequestForm.Status;
 
-        if (IsDraftStatus(requestedStatus))
+        if (ApprovalWorkflow.IsDraftStatus(requestedStatus))
         {
             ModelState.AddModelError(nameof(RequestForm.Status),
                 "Requests cannot be moved back to Draft.");
         }
 
-        if ((IsApprovedStatus(requestedStatus) || IsRejectedStatus(requestedStatus))
-            && !IsPendingApprovalStatus(normalizedCurrentStatus))
+        if ((ApprovalWorkflow.IsApprovedStatus(requestedStatus)
+                || ApprovalWorkflow.IsRejectedStatus(requestedStatus))
+            && !ApprovalWorkflow.IsPendingApprovalStatus(normalizedCurrentStatus))
         {
             ModelState.AddModelError(nameof(RequestForm.Status),
                 "Only pending requests can be approved or rejected.");
@@ -130,7 +130,8 @@ public class EditModel : RequestFormPageModel
 
     private void ValidateStatusRequirements()
     {
-        if (IsRejectedStatus(RequestForm.Status) && string.IsNullOrWhiteSpace(RequestForm.RejectionReason))
+        if (ApprovalWorkflow.IsRejectedStatus(RequestForm.Status)
+            && string.IsNullOrWhiteSpace(RequestForm.RejectionReason))
         {
             ModelState.AddModelError(nameof(RequestForm.RejectionReason),
                 "Rejection reason is required when a request is rejected.");
@@ -142,28 +143,6 @@ public class EditModel : RequestFormPageModel
         return string.Equals(submitValue, "Yes", StringComparison.OrdinalIgnoreCase);
     }
 
-    private static bool IsDraftStatus(string? status)
-    {
-        return string.Equals(status, DraftStatus, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(status, "Draft", StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static bool IsPendingApprovalStatus(string? status)
-    {
-        return string.Equals(status, PendingApprovalStatus, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(status, "Pending Approval", StringComparison.OrdinalIgnoreCase)
-            || string.Equals(status, "Submit for Approval", StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static bool IsApprovedStatus(string? status)
-    {
-        return string.Equals(status, ApprovedStatus, StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static bool IsRejectedStatus(string? status)
-    {
-        return string.Equals(status, RejectedStatus, StringComparison.OrdinalIgnoreCase);
-    }
 
     private async Task LoadOptionsAsync()
     {
@@ -185,32 +164,20 @@ public class EditModel : RequestFormPageModel
             .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
     }
 
-    private static bool IsFinalStatus(string? status)
-    {
-        return string.Equals(status, "Approved", StringComparison.OrdinalIgnoreCase)
-            || string.Equals(status, "Rejected", StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static bool IsSubmittedForApproval(UarRequest request)
-    {
-        return string.Equals(request.SubmitForApproval, "Yes", StringComparison.OrdinalIgnoreCase)
-            || string.Equals(request.Status, "Submitted for Approval", StringComparison.OrdinalIgnoreCase);
-    }
-
     private async Task SendWorkflowEmailsAsync(UarRequest previousRequest, UarRequest updatedRequest)
     {
-        var wasSubmitted = IsSubmittedForApproval(previousRequest);
-        var isSubmitted = IsSubmittedForApproval(updatedRequest);
+        var wasSubmitted = ApprovalWorkflow.IsSubmittingForApproval(previousRequest);
+        var isSubmitted = ApprovalWorkflow.IsSubmittingForApproval(updatedRequest);
         if (!wasSubmitted && isSubmitted)
         {
             await _emailService.SendApproverEmailAsync(updatedRequest);
         }
 
-        var wasFinal = IsFinalStatus(previousRequest.Status);
-        var isFinal = IsFinalStatus(updatedRequest.Status);
+        var wasFinal = ApprovalWorkflow.IsFinalStatus(previousRequest.Status);
+        var isFinal = ApprovalWorkflow.IsFinalStatus(updatedRequest.Status);
         if (!wasFinal && isFinal)
         {
-            var approved = string.Equals(updatedRequest.Status, "Approved", StringComparison.OrdinalIgnoreCase);
+            var approved = ApprovalWorkflow.IsApprovedStatus(updatedRequest.Status);
             await _emailService.SendSubmitterDecisionEmailAsync(updatedRequest, approved);
 
             if (approved)
