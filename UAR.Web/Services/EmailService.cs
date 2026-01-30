@@ -18,7 +18,7 @@ public class EmailService
 
     public async Task<EmailPreview?> SendApproverEmailAsync(UarRequest request)
     {
-        var recipient = request.AuthorizedApprover;
+        var recipient = request.AuthorizedApproverEmail;
         if (string.IsNullOrWhiteSpace(recipient))
         {
             _logger.LogWarning("Approver email missing for request {RequestNumber}.", request.RequestNumber);
@@ -58,7 +58,7 @@ public class EmailService
 
     public Task SendRdoApprovalRequestAsync(UarRequest request, string baseUrl)
     {
-        var recipient = request.RdoApprover;
+        var recipient = request.RdoApproverEmail;
         if (string.IsNullOrWhiteSpace(recipient))
         {
             _logger.LogWarning("RDO approver email missing for request {RequestNumber}.", request.RequestNumber);

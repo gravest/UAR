@@ -35,8 +35,8 @@ public class IndexModel : PageModel
             .Where(request =>
                 Matches(RequestNumberQuery, request.RequestNumber) &&
                 Matches(SubmitterQuery, request.ProgramAdministrator) &&
-                Matches(ApproverQuery, request.AuthorizedApprover) &&
-                Matches(RdoApproverQuery, request.RdoApprover))
+                MatchesAny(ApproverQuery, request.AuthorizedApproverName, request.AuthorizedApproverEmail) &&
+                MatchesAny(RdoApproverQuery, request.RdoApproverName, request.RdoApproverEmail))
             .ToList();
     }
 
@@ -49,5 +49,15 @@ public class IndexModel : PageModel
 
         return !string.IsNullOrWhiteSpace(value)
             && value.Contains(query.Trim(), StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool MatchesAny(string? query, params string?[] values)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return true;
+        }
+
+        return values.Any(value => Matches(query, value));
     }
 }

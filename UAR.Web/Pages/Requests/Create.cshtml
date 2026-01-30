@@ -185,18 +185,26 @@
                         <input class="form-control" asp-for="RequestForm.Status" readonly />
                     </div>
                     <div>
-                        <label class="form-label required" asp-for="RequestForm.AuthorizedApprover">Authorized Approver</label>
-                        <input class="form-control" asp-for="RequestForm.AuthorizedApprover" />
+                        <label class="form-label required" asp-for="RequestForm.AuthorizedApproverName">Authorized Approver Name</label>
+                        <input class="form-control" asp-for="RequestForm.AuthorizedApproverName" />
                         <div class="form-hint">Indicate the person responsible for approving your request (usually the direct manager).</div>
+                    </div>
+                    <div>
+                        <label class="form-label required" asp-for="RequestForm.AuthorizedApproverEmail">Authorized Approver Email</label>
+                        <input class="form-control" asp-for="RequestForm.AuthorizedApproverEmail" type="email" />
                     </div>
                     <div>
                         <label class="form-label required" asp-for="RequestForm.ProgramAdministrator">Program Administrator / Manager</label>
                         <input class="form-control" asp-for="RequestForm.ProgramAdministrator" />
                     </div>
                     <div>
-                        <label class="form-label" asp-for="RequestForm.RdoApprover">RDO Approver</label>
-                        <input class="form-control" asp-for="RequestForm.RdoApprover" />
+                        <label class="form-label" asp-for="RequestForm.RdoApproverName">RDO Approver Name</label>
+                        <input class="form-control" asp-for="RequestForm.RdoApproverName" />
                         <div class="form-hint">Required when any access marked "RDO Approval Required" is selected (e.g., O365 E3).</div>
+                    </div>
+                    <div>
+                        <label class="form-label" asp-for="RequestForm.RdoApproverEmail">RDO Approver Email</label>
+                        <input class="form-control" asp-for="RequestForm.RdoApproverEmail" type="email" />
                     </div>
                 </div>
                 <div class="accordion-body section-body">

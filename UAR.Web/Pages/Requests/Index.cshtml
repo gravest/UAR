@@ -80,7 +80,10 @@
                     <td>@request.EmployeeFirstName @request.EmployeeLastName</td>
                     <td>@request.Program1</td>
                     <td>@request.Status</td>
-                    <td>@request.AuthorizedApprover</td>
+                    <td>
+                        <div>@request.AuthorizedApproverName</div>
+                        <div class="text-muted small">@request.AuthorizedApproverEmail</div>
+                    </td>
                     <td class="text-end">
                         <a class="btn btn-sm btn-outline-primary" asp-page="/Requests/Details" asp-route-id="@request.Id">View</a>
                         @if (string.Equals(request.Status, "Approved", StringComparison.OrdinalIgnoreCase))

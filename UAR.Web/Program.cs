@@ -43,7 +43,7 @@ app.MapPost("/approvals/manager/{id:int}/approve", async (
 
     if (RdoApprovalEvaluator.RequiresRdoApproval(request))
     {
-        if (string.IsNullOrWhiteSpace(request.RdoApprover))
+        if (string.IsNullOrWhiteSpace(request.RdoApproverEmail))
         {
             return Results.BadRequest("RDO Approver is required before manager approval.");
         }

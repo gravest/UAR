@@ -180,7 +180,8 @@ else
             </div>
             <div class="col-md-6">
                 <label class="form-label">Authorized Approver</label>
-                <div class="form-control-static">@Model.RequestDetails.AuthorizedApprover</div>
+                <div class="form-control-static">@Model.RequestDetails.AuthorizedApproverName</div>
+                <div class="text-muted small">@Model.RequestDetails.AuthorizedApproverEmail</div>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Program Administrator</label>
@@ -188,7 +189,8 @@ else
             </div>
             <div class="col-md-6">
                 <label class="form-label">RDO Approver</label>
-                <div class="form-control-static">@Model.RequestDetails.RdoApprover</div>
+                <div class="form-control-static">@Model.RequestDetails.RdoApproverName</div>
+                <div class="text-muted small">@Model.RequestDetails.RdoApproverEmail</div>
             </div>
             <div class="col-md-12">
                 <label class="form-label">Rejection Reason</label>

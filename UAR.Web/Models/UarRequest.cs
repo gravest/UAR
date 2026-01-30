@@ -64,12 +64,19 @@ public class UarRequest
     public string Status { get; set; } = string.Empty;
 
     [Required]
-    public string AuthorizedApprover { get; set; } = string.Empty;
+    public string AuthorizedApproverName { get; set; } = string.Empty;
+
+    [Required]
+    [EmailAddress]
+    public string AuthorizedApproverEmail { get; set; } = string.Empty;
 
     [Required]
     public string ProgramAdministrator { get; set; } = string.Empty;
 
-    public string? RdoApprover { get; set; }
+    public string? RdoApproverName { get; set; }
+
+    [EmailAddress]
+    public string? RdoApproverEmail { get; set; }
 
     public string? RejectionReason { get; set; }
 
