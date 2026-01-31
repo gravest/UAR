@@ -42,7 +42,7 @@ public class EmailService
         var subject = $"UAR Request {request.RequestNumber} Awaiting Approval";
         var body = $"A user access request has been submitted for approval.\n\n" +
                    $"Employee: {request.EmployeeFirstName} {request.EmployeeLastName}\n" +
-                   $"Requested by: {request.ProgramAdministrator}\n" +
+                   $"Requested by: {request.ProgramAdministratorName}\n" +
                    $"Status: {request.Status}\n\n" +
                    $"Approve: {approvalLink}\n" +
                    (string.IsNullOrWhiteSpace(rejectionLink) ? string.Empty : $"Reject: {rejectionLink}\n");
@@ -70,7 +70,7 @@ public class EmailService
         var subject = $"UAR Request {request.RequestNumber} Awaiting RDO Approval";
         var body = $"A user access request requires RDO approval.\n\n" +
                    $"Employee: {request.EmployeeFirstName} {request.EmployeeLastName}\n" +
-                   $"Requested by: {request.ProgramAdministrator}\n" +
+                   $"Requested by: {request.ProgramAdministratorName}\n" +
                    $"Status: {request.Status}\n\n" +
                    $"Approve: {approveUrl}\n" +
                    $"Reject: {rejectUrl}";
@@ -85,7 +85,7 @@ public class EmailService
 
     public Task SendSubmitterDecisionEmailAsync(UarRequest request, bool approved)
     {
-        var recipient = request.ProgramAdministrator;
+        var recipient = request.ProgramAdministratorEmail;
         if (string.IsNullOrWhiteSpace(recipient))
         {
             _logger.LogWarning("Submitter email missing for request {RequestNumber}.", request.RequestNumber);

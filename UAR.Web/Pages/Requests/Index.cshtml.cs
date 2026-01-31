@@ -34,7 +34,7 @@ public class IndexModel : PageModel
         Requests = requests
             .Where(request =>
                 Matches(RequestNumberQuery, request.RequestNumber) &&
-                Matches(SubmitterQuery, request.ProgramAdministrator) &&
+                MatchesAny(SubmitterQuery, request.ProgramAdministratorName, request.ProgramAdministratorEmail) &&
                 MatchesAny(ApproverQuery, request.AuthorizedApproverName, request.AuthorizedApproverEmail) &&
                 MatchesAny(RdoApproverQuery, request.RdoApproverName, request.RdoApproverEmail))
             .ToList();

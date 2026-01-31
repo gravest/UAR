@@ -71,7 +71,11 @@ public class UarRequest
     public string AuthorizedApproverEmail { get; set; } = string.Empty;
 
     [Required]
-    public string ProgramAdministrator { get; set; } = string.Empty;
+    public string ProgramAdministratorName { get; set; } = string.Empty;
+
+    [Required]
+    [EmailAddress]
+    public string ProgramAdministratorEmail { get; set; } = string.Empty;
 
     public string? RdoApproverName { get; set; }
 
