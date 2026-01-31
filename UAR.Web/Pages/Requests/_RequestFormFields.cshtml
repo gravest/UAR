@@ -1,4 +1,5 @@
 @model UAR.Web.Pages.Requests.RequestFormPageModel
+@using UAR.Web.Services
 
 <div class="accordion" id="uarAccordion">
     <div class="accordion-item section-card">
@@ -194,11 +195,14 @@
             <input class="form-control" asp-for="RequestForm.RdoApproverEmail" type="email" />
         </div>
             </div>
-            <div class="accordion-body section-body">
-        <label class="form-label" asp-for="RequestForm.RejectionReason">Rejection Reason</label>
-        <textarea class="form-control" asp-for="RequestForm.RejectionReason" rows="2"></textarea>
-        <div class="form-hint">Only required when Status = Rejected.</div>
-            </div>
+            @if (ApprovalWorkflow.IsPendingApprovalStatus(Model.RequestForm.Status))
+            {
+                <div class="accordion-body section-body">
+                    <label class="form-label" asp-for="RequestForm.RejectionReason">Rejection Reason</label>
+                    <textarea class="form-control" asp-for="RequestForm.RejectionReason" rows="2"></textarea>
+                    <div class="form-hint">Only required when Status = Rejected.</div>
+                </div>
+            }
         </div>
     </div>
 
