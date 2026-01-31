@@ -179,31 +179,37 @@
                         <label class="form-label required" asp-for="RequestForm.Status">Status</label>
                         <input class="form-control" asp-for="RequestForm.Status" readonly />
                     </div>
-                    <div>
-                        <label class="form-label required" asp-for="RequestForm.AuthorizedApproverName">Authorized Approver Name</label>
-                        <input class="form-control" asp-for="RequestForm.AuthorizedApproverName" />
-                        <div class="form-hint">Indicate the person responsible for approving your request (usually the direct manager).</div>
+                    <div class="approval-contact">
+                        <div>
+                            <label class="form-label required" asp-for="RequestForm.AuthorizedApproverName">Authorized Approver Name</label>
+                            <input class="form-control" asp-for="RequestForm.AuthorizedApproverName" />
+                            <div class="form-hint">Indicate the person responsible for approving your request (usually the direct manager).</div>
+                        </div>
+                        <div>
+                            <label class="form-label required" asp-for="RequestForm.AuthorizedApproverEmail">Authorized Approver Email</label>
+                            <input class="form-control" asp-for="RequestForm.AuthorizedApproverEmail" type="email" />
+                        </div>
                     </div>
-                    <div>
-                        <label class="form-label required" asp-for="RequestForm.AuthorizedApproverEmail">Authorized Approver Email</label>
-                        <input class="form-control" asp-for="RequestForm.AuthorizedApproverEmail" type="email" />
+                    <div class="approval-contact">
+                        <div>
+                            <label class="form-label required" asp-for="RequestForm.ProgramAdministratorName">Program Administrator / Manager Name</label>
+                            <input class="form-control" asp-for="RequestForm.ProgramAdministratorName" />
+                        </div>
+                        <div>
+                            <label class="form-label required" asp-for="RequestForm.ProgramAdministratorEmail">Program Administrator / Manager Email</label>
+                            <input class="form-control" asp-for="RequestForm.ProgramAdministratorEmail" type="email" />
+                        </div>
                     </div>
-                    <div>
-                        <label class="form-label required" asp-for="RequestForm.ProgramAdministratorName">Program Administrator / Manager Name</label>
-                        <input class="form-control" asp-for="RequestForm.ProgramAdministratorName" />
-                    </div>
-                    <div>
-                        <label class="form-label required" asp-for="RequestForm.ProgramAdministratorEmail">Program Administrator / Manager Email</label>
-                        <input class="form-control" asp-for="RequestForm.ProgramAdministratorEmail" type="email" />
-                    </div>
-                    <div>
-                        <label class="form-label" asp-for="RequestForm.RdoApproverName">RDO Approver Name</label>
-                        <input class="form-control" asp-for="RequestForm.RdoApproverName" />
-                        <div class="form-hint">Required when any access marked "RDO Approval Required" is selected (e.g., O365 E3).</div>
-                    </div>
-                    <div>
-                        <label class="form-label" asp-for="RequestForm.RdoApproverEmail">RDO Approver Email</label>
-                        <input class="form-control" asp-for="RequestForm.RdoApproverEmail" type="email" />
+                    <div class="approval-contact">
+                        <div>
+                            <label class="form-label" asp-for="RequestForm.RdoApproverName">RDO Approver Name</label>
+                            <input class="form-control" asp-for="RequestForm.RdoApproverName" />
+                            <div class="form-hint">Required when any access marked "RDO Approval Required" is selected (e.g., O365 E3).</div>
+                        </div>
+                        <div>
+                            <label class="form-label" asp-for="RequestForm.RdoApproverEmail">RDO Approver Email</label>
+                            <input class="form-control" asp-for="RequestForm.RdoApproverEmail" type="email" />
+                        </div>
                     </div>
                 </div>
                 @if (ApprovalWorkflow.IsPendingApprovalStatus(Model.RequestForm.Status))
