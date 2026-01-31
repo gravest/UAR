@@ -61,6 +61,11 @@ else
     </div>
 
     <div class="section-card p-3 mb-3">
+        <label class="form-label">UAR Number</label>
+        <div class="form-control-static">@Model.RequestDetails.RequestNumber</div>
+    </div>
+
+    <div class="section-card p-3 mb-3">
         <h5 class="mb-3">Workflow Timeline</h5>
         <dl class="row mb-0">
             <dt class="col-sm-3">Status</dt>
@@ -86,10 +91,6 @@ else
             <div class="col-md-6">
                 <label class="form-label">Company</label>
                 <div class="form-control-static">@Model.RequestDetails.Company</div>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label">Request Number</label>
-                <div class="form-control-static">@Model.RequestDetails.RequestNumber</div>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Employee Name Change</label>
@@ -179,15 +180,18 @@ else
             </div>
             <div class="col-md-6">
                 <label class="form-label">Authorized Approver</label>
-                <div class="form-control-static">@Model.RequestDetails.AuthorizedApprover</div>
+                <div class="form-control-static">@Model.RequestDetails.AuthorizedApproverName</div>
+                <div class="text-muted small">@Model.RequestDetails.AuthorizedApproverEmail</div>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Program Administrator</label>
-                <div class="form-control-static">@Model.RequestDetails.ProgramAdministrator</div>
+                <div class="form-control-static">@Model.RequestDetails.ProgramAdministratorName</div>
+                <div class="text-muted small">@Model.RequestDetails.ProgramAdministratorEmail</div>
             </div>
             <div class="col-md-6">
                 <label class="form-label">RDO Approver</label>
-                <div class="form-control-static">@Model.RequestDetails.RdoApprover</div>
+                <div class="form-control-static">@Model.RequestDetails.RdoApproverName</div>
+                <div class="text-muted small">@Model.RequestDetails.RdoApproverEmail</div>
             </div>
             <div class="col-md-12">
                 <label class="form-label">Rejection Reason</label>

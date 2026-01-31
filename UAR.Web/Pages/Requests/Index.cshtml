@@ -34,6 +34,30 @@
 }
 
 <h2 class="mb-3">User Access Request Log</h2>
+<form method="get" class="bg-white rounded-4 shadow-sm p-3 mb-3">
+    <div class="row g-3 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label" asp-for="RequestNumberQuery">UAR Number</label>
+            <input class="form-control" asp-for="RequestNumberQuery" placeholder="Search by UAR number" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label" asp-for="SubmitterQuery">Submitter</label>
+            <input class="form-control" asp-for="SubmitterQuery" placeholder="Search by submitter" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label" asp-for="ApproverQuery">Approver</label>
+            <input class="form-control" asp-for="ApproverQuery" placeholder="Search by approver" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label" asp-for="RdoApproverQuery">RDO Approver</label>
+            <input class="form-control" asp-for="RdoApproverQuery" placeholder="Search by RDO approver" />
+        </div>
+        <div class="col-12 d-flex gap-2">
+            <button class="btn btn-primary" type="submit">Filter</button>
+            <a class="btn btn-outline-secondary" href="@Url.Page("/Requests/Index")">Clear</a>
+        </div>
+    </div>
+</form>
 <div class="table-responsive bg-white rounded-4 shadow-sm p-3">
     <table class="table table-sm align-middle">
         <thead>
@@ -56,7 +80,10 @@
                     <td>@request.EmployeeFirstName @request.EmployeeLastName</td>
                     <td>@request.Program1</td>
                     <td>@request.Status</td>
-                    <td>@request.AuthorizedApprover</td>
+                    <td>
+                        <div>@request.AuthorizedApproverName</div>
+                        <div class="text-muted small">@request.AuthorizedApproverEmail</div>
+                    </td>
                     <td class="text-end">
                         <a class="btn btn-sm btn-outline-primary" asp-page="/Requests/Details" asp-route-id="@request.Id">View</a>
                         @if (string.Equals(request.Status, "Approved", StringComparison.OrdinalIgnoreCase))

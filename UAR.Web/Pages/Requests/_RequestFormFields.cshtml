@@ -1,4 +1,5 @@
 @model UAR.Web.Pages.Requests.RequestFormPageModel
+@using UAR.Web.Services
 
 <div class="accordion" id="uarAccordion">
     <div class="accordion-item section-card">
@@ -9,14 +10,6 @@
         </h2>
         <div id="uar-general" class="accordion-collapse collapse show" aria-labelledby="uar-general-heading" data-bs-parent="#uarAccordion">
             <div class="accordion-body section-body request-grid">
-                @if (ViewData["UarNumberValue"] is not null)
-                {
-                    <div>
-                        <label class="form-label required">UAR Number</label>
-                        <input class="form-control" value="@ViewData["UarNumberValue"]" readonly />
-                        <div class="form-hint">@ViewData["UarNumberHint"]</div>
-                    </div>
-                }
         <div>
             <label class="form-label" asp-for="RequestForm.EmployeeNameChange">Employee Name Change</label>
             <select class="form-select" asp-for="RequestForm.EmployeeNameChange">
@@ -176,25 +169,40 @@
             <input class="form-control" asp-for="RequestForm.Status" readonly />
         </div>
         <div>
-            <label class="form-label required" asp-for="RequestForm.AuthorizedApprover">Authorized Approver</label>
-            <input class="form-control" asp-for="RequestForm.AuthorizedApprover" />
+            <label class="form-label required" asp-for="RequestForm.AuthorizedApproverName">Authorized Approver Name</label>
+            <input class="form-control" asp-for="RequestForm.AuthorizedApproverName" />
             <div class="form-hint">Indicate the person responsible for approving your request (usually the direct manager).</div>
         </div>
         <div>
-            <label class="form-label required" asp-for="RequestForm.ProgramAdministrator">Program Administrator / Manager</label>
-            <input class="form-control" asp-for="RequestForm.ProgramAdministrator" />
+            <label class="form-label required" asp-for="RequestForm.AuthorizedApproverEmail">Authorized Approver Email</label>
+            <input class="form-control" asp-for="RequestForm.AuthorizedApproverEmail" type="email" />
         </div>
         <div>
-            <label class="form-label" asp-for="RequestForm.RdoApprover">RDO Approver</label>
-            <input class="form-control" asp-for="RequestForm.RdoApprover" />
+            <label class="form-label required" asp-for="RequestForm.ProgramAdministratorName">Program Administrator / Manager Name</label>
+            <input class="form-control" asp-for="RequestForm.ProgramAdministratorName" />
+        </div>
+        <div>
+            <label class="form-label required" asp-for="RequestForm.ProgramAdministratorEmail">Program Administrator / Manager Email</label>
+            <input class="form-control" asp-for="RequestForm.ProgramAdministratorEmail" type="email" />
+        </div>
+        <div>
+            <label class="form-label" asp-for="RequestForm.RdoApproverName">RDO Approver Name</label>
+            <input class="form-control" asp-for="RequestForm.RdoApproverName" />
             <div class="form-hint">Required when any access marked "RDO Approval Required" is selected (e.g., O365 E3).</div>
         </div>
+        <div>
+            <label class="form-label" asp-for="RequestForm.RdoApproverEmail">RDO Approver Email</label>
+            <input class="form-control" asp-for="RequestForm.RdoApproverEmail" type="email" />
+        </div>
             </div>
-            <div class="accordion-body section-body">
-        <label class="form-label" asp-for="RequestForm.RejectionReason">Rejection Reason</label>
-        <textarea class="form-control" asp-for="RequestForm.RejectionReason" rows="2"></textarea>
-        <div class="form-hint">Only required when Status = Rejected.</div>
-            </div>
+            @if (ApprovalWorkflow.IsPendingApprovalStatus(Model.RequestForm.Status))
+            {
+                <div class="accordion-body section-body">
+                    <label class="form-label" asp-for="RequestForm.RejectionReason">Rejection Reason</label>
+                    <textarea class="form-control" asp-for="RequestForm.RejectionReason" rows="2"></textarea>
+                    <div class="form-hint">Only required when Status = Rejected.</div>
+                </div>
+            }
         </div>
     </div>
 

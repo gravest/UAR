@@ -73,10 +73,17 @@ public class CreateModel : PageModel
         RequestForm.AdditionalLawsonAccess = string.Join(", ", SelectedAdditionalLawsonAccess);
 
         if (ApprovalWorkflow.IsSubmittingForApproval(RequestForm)
-            && RdoApprovalEvaluator.RequiresRdoApproval(RequestForm)
-            && string.IsNullOrWhiteSpace(RequestForm.RdoApprover))
+            && RdoApprovalEvaluator.RequiresRdoApproval(RequestForm))
         {
-            ModelState.AddModelError("RequestForm.RdoApprover", "RDO Approver is required when RDO approval is needed.");
+            if (string.IsNullOrWhiteSpace(RequestForm.RdoApproverName))
+            {
+                ModelState.AddModelError("RequestForm.RdoApproverName", "RDO Approver name is required when RDO approval is needed.");
+            }
+
+            if (string.IsNullOrWhiteSpace(RequestForm.RdoApproverEmail))
+            {
+                ModelState.AddModelError("RequestForm.RdoApproverEmail", "RDO Approver email is required when RDO approval is needed.");
+            }
         }
 
         if (!ModelState.IsValid)

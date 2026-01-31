@@ -46,9 +46,9 @@ public class RejectModel : PageModel
             return;
         }
 
-        var approver = string.IsNullOrWhiteSpace(RequestDetails.AuthorizedApprover)
+        var approver = string.IsNullOrWhiteSpace(RequestDetails.AuthorizedApproverName)
             ? "Authorized Approver"
-            : RequestDetails.AuthorizedApprover;
+            : RequestDetails.AuthorizedApproverName;
         var rejectionReason = string.IsNullOrWhiteSpace(RequestDetails.RejectionReason)
             ? "Rejected via email link."
             : RequestDetails.RejectionReason;

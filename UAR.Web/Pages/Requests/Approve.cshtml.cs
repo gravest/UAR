@@ -46,9 +46,9 @@ public class ApproveModel : PageModel
             return;
         }
 
-        var approver = string.IsNullOrWhiteSpace(RequestDetails.AuthorizedApprover)
+        var approver = string.IsNullOrWhiteSpace(RequestDetails.AuthorizedApproverName)
             ? "Authorized Approver"
-            : RequestDetails.AuthorizedApprover;
+            : RequestDetails.AuthorizedApproverName;
 
         Updated = await _requestService.ApproveByTokenAsync(token, approver);
         if (Updated)
